@@ -4,9 +4,13 @@
 #include "Controllable2DPawnBase.h"
 
 
+
+
 void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	
+	//Bind button type action
 	BindButtonMacro(LStick,PlayerInputComponent,AControllable2DPawnBase)
 	BindButtonMacro(RStick,PlayerInputComponent,AControllable2DPawnBase)
 	BindButtonMacro(RBG_LEFT,PlayerInputComponent,AControllable2DPawnBase)
@@ -24,8 +28,12 @@ void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerI
 	BindButtonMacro(LT,PlayerInputComponent,AControllable2DPawnBase)
 	BindButtonMacro(RT,PlayerInputComponent,AControllable2DPawnBase)
 
-	//PlayerInputComponent->BindAxis("")
-
-	
+	//Bind axis values
+	PlayerInputComponent->BindAxis("LStick_X",this,&AControllable2DPawnBase::LStick_X);
+	PlayerInputComponent->BindAxis("LStick_Y",this,&AControllable2DPawnBase::LStick_Y);
+	PlayerInputComponent->BindAxis("RStick_X",this,&AControllable2DPawnBase::RStick_X);
+	PlayerInputComponent->BindAxis("RStick_Y",this,&AControllable2DPawnBase::RStick_Y);
+	PlayerInputComponent->BindAxis("LT_Axis",this,&AControllable2DPawnBase::LT_Axis);
+	PlayerInputComponent->BindAxis("RT_Axis",this,&AControllable2DPawnBase::RT_Axis);
 	
 }
