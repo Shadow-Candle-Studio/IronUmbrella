@@ -146,7 +146,7 @@ public:
     virtual void SetupPlayerInputComponent(UInputComponent*
     	PlayerInputComponent) override;
 	UFUNCTION(BlueprintCallable)
-	void CopySignsToAnim(FS_InputKeyInfo& Source,FS_InputKeyInfo& Dest);
+	void BP_CopySignsToAnim(UPARAM(ref) FS_InputKeyInfo& Source,UPARAM(ref) FS_InputKeyInfo& Dest);
 
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void Appear(bool bShow);

@@ -38,8 +38,10 @@ void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerI
 	
 }
 
-void AControllable2DPawnBase::CopySignsToAnim(FS_InputKeyInfo& Source, FS_InputKeyInfo& Dest)
+void AControllable2DPawnBase::BP_CopySignsToAnim( FS_InputKeyInfo& Source,FS_InputKeyInfo& Dest)
 {
+	
+	
 	Dest=Source;
 	Source.ChargeOverSign=false;
 	Source.ChargeStartSign=false;
