@@ -37,3 +37,20 @@ void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAxis("RT_Axis",this,&AControllable2DPawnBase::RT_Axis);
 	
 }
+
+void AControllable2DPawnBase::CopySignsToAnim(FS_InputKeyInfo& Source, FS_InputKeyInfo& Dest)
+{
+	Dest=Source;
+	Source.ChargeOverSign=false;
+	Source.ChargeStartSign=false;
+	Source.LightPressStartSign=false;
+	Source.LightPressOverSign=false;
+}
+
+void AControllable2DPawnBase::Appear_Implementation(bool bShow)
+{
+	SetActorHiddenInGame(!bShow);
+	SetActorEnableCollision(bShow);
+}
+
+

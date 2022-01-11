@@ -32,20 +32,10 @@ public:
 	
 	
 	GenerateInputActionEvent(LStick)
-	
-	
-	
 	GenerateInputActionEvent(RStick)
-
-	
 	GenerateInputActionEvent(RBG_LEFT)
-	
-
 	GenerateInputActionEvent(RBG_RIGHT)
-
-
 	GenerateInputActionEvent(RBG_TOP)
-	
 	GenerateInputActionEvent(RBG_DOWN)
 	
 	GenerateInputActionEvent(LBG_LEFT)
@@ -100,6 +90,7 @@ public:
 		RT.AxisXValue=RT_AxisValue;
 		Execute_BP_AxisEvent_RT(this,RT_AxisValue);
 	}
+	//Key struct info area starts
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Keyinfo")\
 	FS_InputKeyInfo LStick;
 	FTimerHandle LStickTimerHandler;
@@ -148,6 +139,17 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Keyinfo")\
 	FS_InputKeyInfo LT;
 	FTimerHandle LTTimerHandler;
-//Set up input mapping 
-virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	//Key struct info area ends
+
+	
+    //Set up input mapping 
+    virtual void SetupPlayerInputComponent(UInputComponent*
+    	PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable)
+	void CopySignsToAnim(FS_InputKeyInfo& Source,FS_InputKeyInfo& Dest);
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void Appear(bool bShow);
+	void Appear_Implementation(bool bShow);
+	
 };
