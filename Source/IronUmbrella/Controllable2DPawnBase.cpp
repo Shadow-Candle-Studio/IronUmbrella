@@ -3,7 +3,7 @@
 
 #include "Controllable2DPawnBase.h"
 
-
+#include "Pixel2DComponent.h"
 
 
 void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -53,6 +53,16 @@ void AControllable2DPawnBase::Appear_Implementation(bool bShow)
 {
 	SetActorHiddenInGame(!bShow);
 	SetActorEnableCollision(bShow);
+}
+
+void AControllable2DPawnBase::ChangeFaceDirection(bool bDesireFaceRight)
+{
+	check(GetSprite()!=nullptr)
+	bool currentDir=GetSprite()->GetRelativeRotation().Yaw==0?true:false;
+	if(currentDir!=bDesireFaceRight)
+	{
+		GetSprite()->SetRelativeRotation(FRotator(0,bDesireFaceRight?0.0f:180.0f,0));
+	}
 }
 
 

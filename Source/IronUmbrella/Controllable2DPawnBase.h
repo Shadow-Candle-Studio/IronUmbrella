@@ -151,5 +151,8 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void Appear(bool bShow);
 	void Appear_Implementation(bool bShow);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeFaceDirection(bool bFaceRight);
 	
 };
