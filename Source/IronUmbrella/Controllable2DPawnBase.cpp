@@ -65,4 +65,9 @@ void AControllable2DPawnBase::ChangeFaceDirection(bool bDesireFaceRight)
 	}
 }
 
+UPrimitiveComponent* AControllable2DPawnBase::GetYourCharacterSprite() const
+{
+	return GetSprite();
+}
+
 

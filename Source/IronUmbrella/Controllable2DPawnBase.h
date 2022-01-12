@@ -154,5 +154,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeFaceDirection(bool bFaceRight);
+
+	UFUNCTION(BlueprintCallable)
+	UPrimitiveComponent* GetYourCharacterSprite() const;
 	
 };
