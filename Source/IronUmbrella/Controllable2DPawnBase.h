@@ -157,5 +157,20 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UPrimitiveComponent* GetYourCharacterSprite() const;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isMoving;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isMovingRight;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isJumping;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isFalling;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isDashing=false;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isplayerDead;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool LastDirection;
 	
 };
