@@ -75,6 +75,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 				0.1,true,-1);
 			Cha->isFalling=true;
 			JumpCount++;
+			UE_LOG(LogTemp,Warning,L"Jump")
 			
 		}
 		
@@ -108,6 +109,7 @@ void UBP_MovementComponentBase::CheckDashOver()
 
 void UBP_MovementComponentBase::CheckJumpOver()
 {
+	UE_LOG(LogTemp,Warning,L"JumpOverChecking")
 	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
 	if(Cha!=nullptr&&abs(Cha->GetVelocity().Z)<=0.0f&&Cha->isFalling)
 	{
@@ -115,6 +117,7 @@ void UBP_MovementComponentBase::CheckJumpOver()
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		JumpCount=0;
+		
 	}
 }
 
