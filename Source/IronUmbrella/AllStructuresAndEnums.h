@@ -2,7 +2,7 @@
 Copyright: All rights reserved for Shadow Candle Studio 
 Author: Junlin Sun
 Date:2022-01-9 
-Description: 
+Description: E_PressState,FS_InputKeyInfo
 **************************************************/ 
 #pragma once
 
