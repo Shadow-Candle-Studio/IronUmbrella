@@ -9,6 +9,13 @@ Description: E_PressState,FS_InputKeyInfo
 #include "CoreMinimal.h"
 #include "AllStructuresAndEnums.generated.h"
 
+#define YellSomething(Msg,ClassName)\
+if(GEngine)\
+{\
+ GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Yellow,TEXT("##ClassName: Msg##"));\
+}
+
+
 /**
  * E_PressState records input state of phrases
  */
