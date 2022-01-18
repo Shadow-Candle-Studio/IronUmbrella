@@ -35,7 +35,7 @@ void UBP_AttackComponentBase::BeginPlay()
 	}
 	if(nullptr==OwningChaRef||OwnerPixelCompoRef==nullptr)
 	{
-		YellSomething(Charregf or PixelCompoRef null!,UBP_AttackComponentBase)
+		
 	}
 	if(OwnerPixelCompoRef!=nullptr)
 	{
@@ -50,7 +50,7 @@ void UBP_AttackComponentBase::BeginPlay()
 			false,ENCPoolMethod::None);
 		if(BladeTrailVFX==nullptr)
 		{
-			YellSomething(VFX trail not spawned correctly,UBP_AttackComponentBase)
+			YellSomething(TEXT("UBP_AttackComponentBase: spawned VFX is not usable!"))
 		}
 	}
 }
@@ -125,7 +125,8 @@ void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& 
 			// {
 			// 	m->Jump(400);
 			// }
-			enableAttackVFX(p.Actor->GetTransform());
+			FTransform m(FRotator::ZeroRotator,p.ImpactPoint,FVector(0.01));
+			enableAttackVFX(m);
 			UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
 		}
 		
