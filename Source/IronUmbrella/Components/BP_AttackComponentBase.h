@@ -7,6 +7,7 @@ Description: This file contains the declaration of:UBP_AttackComponentBase
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraCommon.h"
 #include "Components/ActorComponent.h"
 #include "BP_AttackComponentBase.generated.h"
 
@@ -15,7 +16,7 @@ Description: This file contains the declaration of:UBP_AttackComponentBase
  *implementing various ways of attacking: Melee Attack ,
  *Projectile Attack, and Special Attack etc..
  */
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent),Blueprintable)
 class IRONUMBRELLA_API UBP_AttackComponentBase : public UActorComponent
 {
 	GENERATED_BODY()
@@ -45,6 +46,10 @@ protected:
 	float AttacksocketDistAccuracy=1.0f;
 	//should we pause the timer to save computing resources
 	bool CheckIfHasAttackEndSign() const;
+
+	//Niagara system component for showing the blade vfx
+	UNiagaraComponent* BladeTrailVFX;
+	
 public:
 	//Attack sockets prefix 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
@@ -58,10 +63,19 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float SphereTraceRadius=2.0f;
 
+	virtual void DestroyComponent(bool bPromoteChildren) override;
 	
 	
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	FName AttackEndSocketName="AttackEnd";
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float fAttackEndSignRelativeXvalue=1000.0f;
+	
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void enableAttackVFX(FTransform Trans);
+	void enableAttackVFX_Implementation(FTransform Trans);
+
+	//Niagara system pointer to the template BP of blade VFX
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UNiagaraSystem* TrailVFXtemplate;
 };

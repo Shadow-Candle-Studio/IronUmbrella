@@ -2,7 +2,8 @@
 
 
 #include "BP_AttackComponentBase.h"
-
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "BP_MovementComponentBase.h"
 #include "Pixel2DComponent.h"
 #include "IronUmbrella/Controllable2DPawnBase.h"
@@ -14,7 +15,9 @@ UBP_AttackComponentBase::UBP_AttackComponentBase()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	
+	
+	
 	// ...
 }
 
@@ -33,6 +36,22 @@ void UBP_AttackComponentBase::BeginPlay()
 	if(nullptr==OwningChaRef||OwnerPixelCompoRef==nullptr)
 	{
 		YellSomething(Charregf or PixelCompoRef null!,UBP_AttackComponentBase)
+	}
+	if(OwnerPixelCompoRef!=nullptr)
+	{
+		
+		BladeTrailVFX=
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,
+			TrailVFXtemplate,
+			OwnerPixelCompoRef->GetComponentLocation(),
+			FRotator::ZeroRotator,
+			FVector(0.1),
+			false,
+			false,ENCPoolMethod::None);
+		if(BladeTrailVFX==nullptr)
+		{
+			YellSomething(VFX trail not spawned correctly,UBP_AttackComponentBase)
+		}
 	}
 }
 
@@ -84,8 +103,11 @@ void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 				SweepShape,
 				CQueryParams,
 				CResponseParams);
+			if(OutResults.Num()>0)
+			{
+				ProcessAttackHitResults(OutResults);
+			}
 			
-			ProcessAttackHitResults(OutResults);
 		}
 		
 	}
@@ -95,12 +117,18 @@ void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& 
 {
 	for(auto &p:ResultsToProcess)
 	{
-		auto m=Cast<UBP_MovementComponentBase>(Cast<AControllable2DPawnBase>(p.Actor)->GetComponentByClass(UBP_MovementComponentBase::StaticClass()));
-		if(m!=nullptr)
+		if(p.Actor!=nullptr)
 		{
-			m->Jump(400);
+			// auto m=Cast<UBP_MovementComponentBase>(Cast<AControllable2DPawnBase>(p.Actor)->
+			// 	GetComponentByClass(UBP_MovementComponentBase::StaticClass()));
+			// if(m!=nullptr)
+			// {
+			// 	m->Jump(400);
+			// }
+			enableAttackVFX(p.Actor->GetTransform());
+			UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
 		}
-		UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
+		
 	}
 }
 
@@ -159,6 +187,23 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 			TimerInterval,
 			true,
 			-1);
+	}
+}
+
+void UBP_AttackComponentBase::DestroyComponent(bool bPromoteChildren)
+{
+	Super::DestroyComponent(bPromoteChildren);
+	//DestroyComponent(TrailVFXtemplate);
+	
+	
+}
+
+void UBP_AttackComponentBase::enableAttackVFX_Implementation(FTransform Trans)
+{
+	if(BladeTrailVFX!=nullptr)
+	{
+		BladeTrailVFX->SetWorldTransform(Trans);
+		BladeTrailVFX->Activate(true);
 	}
 }
 
