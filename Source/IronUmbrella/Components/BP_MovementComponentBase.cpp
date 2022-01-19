@@ -63,7 +63,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
 	if(Cha!=nullptr)
 	{
-		if(JumpCount<JumpMaxCountLimit)
+		if(JumpCount<JumpMaxCountLimit&&!Cha->isDashing)
 		{
 			Cha->GetCharacterMovement()->
 			SetMovementMode(EMovementMode::MOVE_Falling);

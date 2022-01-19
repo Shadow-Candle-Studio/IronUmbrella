@@ -7,6 +7,7 @@
 #include "BP_MovementComponentBase.h"
 #include "Pixel2DComponent.h"
 #include "IronUmbrella/Controllable2DPawnBase.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values for this component's properties
@@ -117,7 +118,7 @@ void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& 
 {
 	for(auto &p:ResultsToProcess)
 	{
-		if(p.Actor!=nullptr)
+		if(p.Actor.IsValid()&&OwningChaRef!=nullptr)
 		{
 			// auto m=Cast<UBP_MovementComponentBase>(Cast<AControllable2DPawnBase>(p.Actor)->
 			// 	GetComponentByClass(UBP_MovementComponentBase::StaticClass()));
@@ -128,6 +129,12 @@ void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& 
 			FTransform m(FRotator::ZeroRotator,p.ImpactPoint,FVector(0.01));
 			enableAttackVFX(m);
 			UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
+			if(Cast<AControllable2DPawnBase>(OwningChaRef)!=nullptr)
+			UGameplayStatics::ApplyDamage(p.Actor.Get(),
+				100,
+				Cast<AControllable2DPawnBase>(OwningChaRef)->GetController(),
+				OwningChaRef,
+				UDamageType::StaticClass());
 		}
 		
 	}
