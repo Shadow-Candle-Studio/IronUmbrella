@@ -9,6 +9,13 @@ Description: E_PressState,FS_InputKeyInfo
 #include "CoreMinimal.h"
 #include "AllStructuresAndEnums.generated.h"
 
+#define YellSomething(Msg)\
+if(GEngine)\
+{\
+ GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Yellow,Msg);\
+}
+
+
 /**
  * E_PressState records input state of phrases
  */
@@ -24,6 +31,7 @@ enum E_PressState
 USTRUCT(BlueprintType)
 struct IRONUMBRELLA_API FS_InputKeyInfo
 {
+ 
  GENERATED_BODY()
  //Detect whether this is 2D Axis like Lstick or Rstick
  UPROPERTY(BlueprintReadWrite,EditAnywhere)

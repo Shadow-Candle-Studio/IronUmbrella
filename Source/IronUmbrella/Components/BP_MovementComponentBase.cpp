@@ -42,7 +42,7 @@ void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashD
 		
 		if(!Cha->isDashing)
 		{
-			UE_LOG(LogTemp,Warning,L"Check dashed ")
+			//UE_LOG(LogTemp,Warning,L"Check dashed ")
 			ChaMovementCompoRef->SetMovementMode(EMovementMode::MOVE_Falling);
 			ChaMovementCompoRef->Velocity=FVector
 			(Cha->GetYourCharacterSprite()->
@@ -63,7 +63,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
 	if(Cha!=nullptr)
 	{
-		if(JumpCount<JumpMaxCountLimit)
+		if(JumpCount<JumpMaxCountLimit&&!Cha->isDashing)
 		{
 			Cha->GetCharacterMovement()->
 			SetMovementMode(EMovementMode::MOVE_Falling);
@@ -75,7 +75,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 				0.1,true,-1);
 			Cha->isFalling=true;
 			JumpCount++;
-			UE_LOG(LogTemp,Warning,L"Jump")
+			///UE_LOG(LogTemp,Warning,L"Jump")
 			
 		}
 		
@@ -109,7 +109,7 @@ void UBP_MovementComponentBase::CheckDashOver()
 
 void UBP_MovementComponentBase::CheckJumpOver()
 {
-	UE_LOG(LogTemp,Warning,L"JumpOverChecking")
+	//UE_LOG(LogTemp,Warning,L"JumpOverChecking")
 	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
 	if(Cha!=nullptr&&abs(Cha->GetVelocity().Z)<=0.0f&&Cha->isFalling)
 	{
