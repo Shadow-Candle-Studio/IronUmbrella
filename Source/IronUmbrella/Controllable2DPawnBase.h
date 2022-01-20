@@ -30,7 +30,7 @@ class IRONUMBRELLA_API AControllable2DPawnBase : public APixel2DCharacter, publi
 
 public:
 	
-	
+	virtual void BeginPlay() override;
 	GenerateInputActionEvent(LStick)
 	GenerateInputActionEvent(RStick)
 	GenerateInputActionEvent(RBG_LEFT)

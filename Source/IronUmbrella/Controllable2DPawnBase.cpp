@@ -4,7 +4,19 @@
 #include "Controllable2DPawnBase.h"
 
 #include "Pixel2DComponent.h"
+#include "Components/CapsuleComponent.h"
 
+
+void AControllable2DPawnBase::BeginPlay()
+{
+	Super::BeginPlay();
+	UCapsuleComponent* Capsule= GetCapsuleComponent();
+	if(Capsule!=nullptr)
+	{
+		Capsule->CanCharacterStepUpOn=ECanBeCharacterBase::ECB_Yes;
+	}
+	
+}
 
 void AControllable2DPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
