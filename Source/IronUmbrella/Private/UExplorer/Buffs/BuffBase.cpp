@@ -3,6 +3,7 @@
 
 #include "UExplorer/Buffs/BuffBase.h"
 #include "UExplorer/BuffManager.h"
+#include "UExplorer/StateManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 // Sets default values

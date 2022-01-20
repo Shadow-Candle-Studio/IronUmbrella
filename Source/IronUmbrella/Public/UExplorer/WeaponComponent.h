@@ -9,17 +9,16 @@
 #include "DebugHelper.h"
 #include "WeaponComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class IRONUMBRELLA_API UWeaponComponent : public UActorComponent,public IComponentInterface
 {
 	GENERATED_BODY()
-
 public:	
 	// Sets default values for this component's properties
 	UWeaponComponent();
-	
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentInitialize() override;
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentDestroy() override;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
@@ -34,13 +33,30 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	AActor* Owner;
 	
+	UPROPERTY(BlueprintReadOnly)
+	float StanceDamage;
+	
+	UPROPERTY(BlueprintReadOnly)
+	TMap<uint8,float> StanceMultiplMap;
+	
+	UPROPERTY(BlueprintReadOnly)
+	class UStateManager* StateManager;
+
+	void ChangeStanceDamage(const ECombatState& InState,uint8 AttackIndex);
+	
 	bool GetWeaponInfoFromDataTable(uint8 Id);
 
 	UFUNCTION(BlueprintCallable)
-	inline float GetWeaponDamage()const;
+	float GetWeaponDamage()const;
 
 	UFUNCTION(BlueprintCallable)
-	inline float GetWeaponGuardMultiplier()const;
+	float GetWeaponGuardMultiplier()const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetStanceDamage()const;
+
+	UFUNCTION(BlueprintCallable)
+	TMap<uint8,float> GetStanceMultiMap()const;
 	
 	UFUNCTION(BlueprintCallable)
 	bool ToggleWeaponById(uint8 Id);
@@ -52,6 +68,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
 };
+
+

@@ -18,12 +18,13 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class IRONUMBRELLA_API UStateManager : public UActorComponent,public IComponentInterface
 {
 	GENERATED_BODY()
-
 public:	
 	// Sets default values for this component's properties
 	UStateManager();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentInitialize() override;
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentDestroy() override;
 	
 
@@ -52,7 +53,7 @@ public:
 	void ResetState();
 	
 	UFUNCTION(BlueprintCallable)
-	void SetCombatState(const ECombatState& InCombat,uint8 AttackIndex);
+	void SetCombatState(const ECombatState InCombat,uint8 AttackIndex);
 
 	UFUNCTION(BlueprintCallable)
 	ECombatState GetCombatState()const;
@@ -69,7 +70,6 @@ public:
 	void RemoveDebuff(const EDebuffState& InDebuff);
 
 	void ClearDebuffPool();
-
 private:
 	AActor* Owner;
 	EState State;
@@ -83,8 +83,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
 };
 
 

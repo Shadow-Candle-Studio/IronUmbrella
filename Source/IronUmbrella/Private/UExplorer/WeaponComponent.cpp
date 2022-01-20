@@ -2,6 +2,8 @@
 
 
 #include "UExplorer/WeaponComponent.h"
+#include "UExplorer/StateManager.h"
+#include "UExplorer/StateManager.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -17,7 +19,22 @@ void UWeaponComponent::ComponentInitialize()
 {
 	ToggleWeaponById(WeaponId);
 	Owner = GetOwner();
+	const auto tmp = Owner->GetComponentByClass(UStateManager::StaticClass());
+	if(tmp)
+	{
+		StateManager = Cast<UStateManager>(tmp);
+		StateManager->CombatStateChangeEvent.AddDynamic(this,&UWeaponComponent::ChangeStanceDamage);
+	}
 }
+
+void UWeaponComponent::ChangeStanceDamage(const ECombatState& InState,uint8 AttackIndex)
+{
+	if(InState==ECombatState::CommonAtk)
+	{
+		StanceDamage = *StanceMultiplMap.Find(AttackIndex);
+	}
+}
+
 
 void UWeaponComponent::ComponentDestroy()
 {
@@ -37,6 +54,7 @@ bool UWeaponComponent::GetWeaponInfoFromDataTable(uint8 Id)
 	if(InfoPtr)
 	{
 		WeaponInfo = *InfoPtr;
+		StanceMultiplMap = WeaponInfo.StanceDamageMap;
 		return true;
 	}else
 	{
@@ -55,6 +73,16 @@ float UWeaponComponent::GetWeaponGuardMultiplier()const
 	return WeaponInfo.GuardMultiplier;
 }
 
+float UWeaponComponent::GetStanceDamage() const
+{
+	return StanceDamage;
+}
+
+TMap<uint8, float> UWeaponComponent::GetStanceMultiMap() const
+{
+	return StanceMultiplMap;
+}
+
 bool UWeaponComponent::ToggleWeaponById(uint8 Id)
 {
 	return GetWeaponInfoFromDataTable(Id);
@@ -66,7 +94,6 @@ void UWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 	ComponentInitialize();
 	// ...
-	
 }
 
 

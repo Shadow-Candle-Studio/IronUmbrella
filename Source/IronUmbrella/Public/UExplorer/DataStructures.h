@@ -4,7 +4,7 @@
 #include "DataStructures.generated.h"
 
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EProperty:uint8
 {
 	Health						UMETA(DisplayName = "生命值"),
@@ -24,7 +24,7 @@ enum class EProperty:uint8
 };
 
 //修改属性的方式
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EModifyPropertyMethodType:uint8
 {
 	InitValDirectStack,
@@ -34,10 +34,11 @@ enum class EModifyPropertyMethodType:uint8
 };
 
 //属性结构
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,Blueprintable)
 struct FPropertyStruct:public FTableRowBase
 {
 	GENERATED_BODY();
+	FPropertyStruct():PropertyType(EProperty::Health),InitVal(0.1f),FinalVal(0.1f),MaxVal(0.5f),MinVal(0.f){};
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	EProperty PropertyType;
 	
@@ -55,7 +56,7 @@ struct FPropertyStruct:public FTableRowBase
 };
 
 // 属性数值种类
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EPropertyValueType:uint8
 {
 	InitValue,
@@ -65,7 +66,7 @@ enum class EPropertyValueType:uint8
 };
 
 // 伤害类型
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EDamageType:uint8
 {
 	PhysicalDamage,
@@ -74,7 +75,7 @@ enum class EDamageType:uint8
 };
 
 // 得到的伤害信息
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,Blueprintable)
 struct FTakeDamageInfo
 {
 	GENERATED_BODY()
@@ -107,7 +108,7 @@ struct FTakeDamageInfo
 
 
 // 武器类型
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EWeaponType:uint8
 {
 	Dagger			UMETA(DisplayName="匕首"),
@@ -118,7 +119,7 @@ enum class EWeaponType:uint8
 };
 
 // 武器信息
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,Blueprintable)
 struct FWeaponInfo:public FTableRowBase
 {
 	GENERATED_BODY();
@@ -134,11 +135,14 @@ struct FWeaponInfo:public FTableRowBase
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName="武器格挡系数"))
 	float GuardMultiplier;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "架势伤害系数"))
+	TMap<uint8,float> StanceDamageMap;
 };
 
 
 // 状态
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EState:uint8
 {
 	Idle,			
@@ -153,7 +157,7 @@ enum class EState:uint8
 	Dead
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class ECombatState:uint8
 {
 	CommonAtk,	
@@ -162,7 +166,7 @@ enum class ECombatState:uint8
 	NULLState
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EStunType:uint8
 {
 	Fear,
@@ -172,7 +176,7 @@ enum class EStunType:uint8
 	NULLState
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EDebuffState:uint8
 {
 	OnFired,
@@ -183,7 +187,7 @@ enum class EDebuffState:uint8
 
 // BUff相关
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffLifespanType:uint8
 {
 	Permanent,
@@ -192,7 +196,7 @@ enum class EBuffLifespanType:uint8
 };
 
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffRarity:uint8
 {
 	Normal,
@@ -200,7 +204,7 @@ enum class EBuffRarity:uint8
 	Legend
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffStackMethod:uint8
 {
 	Stackable,
@@ -209,7 +213,7 @@ enum class EBuffStackMethod:uint8
 };
 
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffState:uint8
 {
 	Waiting,
@@ -218,7 +222,7 @@ enum class EBuffState:uint8
 	Dead,
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffStatus:uint8
 {
 	PropertyModifier,
@@ -226,7 +230,7 @@ enum class EBuffStatus:uint8
 	Another
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffTriggerMethod:uint8
 {
 	Time,
@@ -234,14 +238,14 @@ enum class EBuffTriggerMethod:uint8
 	Action
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffTimeTriggerMethod:uint8
 {
 	Interval,
 	Delay,
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType,Blueprintable)
 enum class EBuffType:uint8
 {
 	Buff,
@@ -263,7 +267,7 @@ struct FBuffLifespanInfo:public FTableRowBase
 };
 
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,Blueprintable)
 struct FBuffTimeTriggerInfo:public FTableRowBase
 {
 	GENERATED_BODY()
@@ -279,7 +283,7 @@ struct FBuffTimeTriggerInfo:public FTableRowBase
 
 
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType,Blueprintable)
 struct FBuffInfo:public FTableRowBase
 {
 	GENERATED_BODY();

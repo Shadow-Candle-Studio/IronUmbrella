@@ -3,12 +3,11 @@
 
 #include "UExplorer/PropertyManager.h"
 
-
-
 void UPropertyManager::AcquirePropertiesFromDataTable()
 {
 	if(!PropertyData)return;
-	for(const auto &RowName:PropertyData->GetRowNames())
+	auto RowNames = PropertyData->GetRowNames();
+	for(const auto RowName:RowNames)
 	{
 		FPropertyStruct* Property = PropertyData->FindRow<FPropertyStruct>(RowName,FString(""));
 		if(Property)
@@ -16,19 +15,7 @@ void UPropertyManager::AcquirePropertiesFromDataTable()
 			PropertyPool.Add(*Property);
 		}
 	}
-}
-
-void UPropertyManager::PrintProperties()
-{
-	if(PropertyPool.Num()>0)
-	{
-		for(const auto& Property:PropertyPool)
-		{
-			FString message;
-			message+=UEnum::GetValueAsString(Property.PropertyType);
-			UDebugHelper::PrintDebugMessage(message);
-		}
-	}
+	RowNames = PropertyData->GetRowNames();
 }
 
 void UPropertyManager::ComponentInitialize()
@@ -36,7 +23,13 @@ void UPropertyManager::ComponentInitialize()
 	AcquirePropertiesFromDataTable();
 	Owner = GetOwner();
 	UActorComponent* Component = Owner->GetComponentByClass(UWeaponComponent::StaticClass());
-	WeaponComponent = Cast<UWeaponComponent>(Component);
+	if(Component)
+	{
+		WeaponComponent = Cast<UWeaponComponent>(Component);
+	}else
+	{
+		UDebugHelper::PrintDebugMessage(TEXT("PropertyManager's weapon component is not valid"));	
+	}
 }
 
 void UPropertyManager::ComponentDestroy()
@@ -46,15 +39,16 @@ void UPropertyManager::ComponentDestroy()
 }
 
 // 计算自己的攻击伤害
-float UPropertyManager::GaveAttackDamage(float StanceDamage)
+float UPropertyManager::GaveAttackDamage()
 {
-	auto BaseDamageMultiplier = GetPropertyByType(EProperty::BaseDamageMultiplier);
-	auto StanceDamageMultiplier = GetPropertyByType(EProperty::StanceDamageMultiplier);
-	auto CritChance = GetPropertyByType(EProperty::StanceCritChanceMultiplier);
-	auto CritDamage = GetPropertyByType(EProperty::StanceCritDamageMultiplier);
+	if(!CheckIsInit())return 0.f;
+	const auto BaseDamageMultiplier = GetPropertyByType(EProperty::BaseDamageMultiplier);
+	const auto StanceDamageMultiplier = GetPropertyByType(EProperty::StanceDamageMultiplier);
+	const auto CritChance = GetPropertyByType(EProperty::StanceCritChanceMultiplier);
+	const auto CritDamage = GetPropertyByType(EProperty::StanceCritDamageMultiplier);
 	float Damage = 0;
 	if(!BaseDamageMultiplier||!StanceDamageMultiplier||!CritChance||!CritDamage)return Damage;
-	float WeaponDamage = WeaponComponent->GetWeaponDamage();
+	const float WeaponDamage = WeaponComponent->GetWeaponDamage();
 	// 武器伤害
 	Damage = WeaponDamage;
 	
@@ -75,8 +69,7 @@ float UPropertyManager::GaveAttackDamage(float StanceDamage)
 	}
 	
 	// *架势加成
-	Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+StanceDamage);
-
+	Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+WeaponComponent->GetStanceDamage());
 	UE_LOG(LogTemp,Warning,TEXT("暴击:%d  伤害:%f"),CritFlag,Damage);
 	return Damage;
 }
@@ -84,8 +77,8 @@ float UPropertyManager::GaveAttackDamage(float StanceDamage)
 // 计算别人对自己造成的伤害
 float UPropertyManager::TakeDamage(const FTakeDamageInfo& DamageInfo)
 {
+	if(!CheckIsInit())return 0.f;
 	float Damage = DamageInfo.Damage;
-	
 	// 没有无视减伤率
 	if(!DamageInfo.IgnoreArmor)
 	{
@@ -128,9 +121,10 @@ float UPropertyManager::TakeDamage(const FTakeDamageInfo& DamageInfo)
 }
 
 // 修改属性值
-bool UPropertyManager::ModifyProperty(const EProperty& PropertyType, const EModifyPropertyMethodType& ModifyMethod,
+bool UPropertyManager::ModifyProperty(const EProperty PropertyType, const EModifyPropertyMethodType ModifyMethod,
 	const float InValue)
 {
+	if(!CheckIsInit())return false;
 	const uint8 PropertyIndex = GetPropertyIndexByType(PropertyType);
 	if(PropertyIndex==-1)return false;
 
@@ -177,12 +171,18 @@ bool UPropertyManager::ModifyProperty(const EProperty& PropertyType, const EModi
 	return true;
 }
 
-float UPropertyManager::GetPropertyValue(const EProperty& PropertyType)
+float UPropertyManager::GetPropertyValue(const EProperty PropertyType)
 {
+	if(!CheckIsInit())return 0.f;
 	return GetPropertyByType(PropertyType)->FinalVal;
 }
 
-const FPropertyStruct* UPropertyManager::GetPropertyByType(const EProperty& PropertyType)
+TArray<FPropertyStruct> UPropertyManager::GetPropertyPool() const
+{
+	return PropertyPool;
+}
+
+const FPropertyStruct* UPropertyManager::GetPropertyByType(const EProperty PropertyType)
 {
 	for(const auto& Property:PropertyPool)
 	{
@@ -194,7 +194,7 @@ const FPropertyStruct* UPropertyManager::GetPropertyByType(const EProperty& Prop
 	return nullptr;
 }
 
-uint8 UPropertyManager::GetPropertyIndexByType(const EProperty& PropertyType)
+uint8 UPropertyManager::GetPropertyIndexByType(const EProperty PropertyType)
 {
 	for(uint8 index = 0; index<PropertyPool.Num();++index)
 	{
@@ -206,17 +206,20 @@ uint8 UPropertyManager::GetPropertyIndexByType(const EProperty& PropertyType)
 	return -1;
 }
 
-float UPropertyManager::GetClampPropertyValue(uint8 PropertyIndex, float Infloat)
+float UPropertyManager::GetClampPropertyValue(const uint8 PropertyIndex,const float Infloat)
 {
 	return FMath::Clamp<float>(Infloat,PropertyPool[PropertyIndex].MinVal,PropertyPool[PropertyIndex].MaxVal);
 }
 
+bool UPropertyManager::CheckIsInit() const
+{
+	return PropertyPool.Num()>0&&Owner&&WeaponComponent;
+}
 
-
-
-
-
-
+float UPropertyManager::GetRatioVal(const float BaseVal,const float Ratio)
+{
+	return BaseVal*(1+Ratio);
+}
 
 // Sets default values for this component's properties
 UPropertyManager::UPropertyManager()
@@ -235,7 +238,6 @@ void UPropertyManager::BeginPlay()
 	Super::BeginPlay();
 	ComponentInitialize();
 	// ...
-	
 }
 
 

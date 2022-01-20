@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ComponentInterface.h"
-#include "DataStructures.h"
 #include "PropertyManager.h"
-#include "StateManager.h"
 #include "UExplorer/Buffs/BuffBase.h"
 #include "Components/ActorComponent.h"
 #include "BuffManager.generated.h"
@@ -23,7 +21,9 @@ class IRONUMBRELLA_API UBuffManager : public UActorComponent,public IComponentIn
 public:	
 	// Sets default values for this component's properties
 	UBuffManager();
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentInitialize() override;
+	UFUNCTION(BlueprintCallable)
 	virtual void ComponentDestroy() override;
 
 	void GetEssentialVar();
@@ -43,7 +43,9 @@ public:
 	void RemoveBuffByClass(TSubclassOf<ABuffBase> Class);
 	bool IsBuffContains(TSubclassOf<ABuffBase> Class)const;
 	uint8 GetBuffIndexByClass(TSubclassOf<ABuffBase> Class);
-	
+
+protected:
+
 private:
 	AActor* Owner;
 	UPropertyManager* OwnerProperty;
@@ -57,7 +59,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
 };
 
 

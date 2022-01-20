@@ -46,7 +46,7 @@ void UStateManager::ResetState()
 	SetCombatState(ECombatState::NULLState,0);
 }
 
-void UStateManager::SetCombatState(const ECombatState& InCombat, uint8 AttackIndex)
+void UStateManager::SetCombatState(const ECombatState InCombat, uint8 AttackIndex)
 {
 	if(CombatState!=InCombat)
 	{
@@ -103,9 +103,8 @@ void UStateManager::ClearDebuffPool()
 void UStateManager::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ComponentInitialize();
 	// ...
-	
 }
 
 

@@ -24,24 +24,21 @@ public:
 	UDataTable* PropertyData;
 
 	// 从数据表获取属性列表
-	UFUNCTION(BlueprintCallable,Category="Interfaces")
+	UFUNCTION(BlueprintCallable)
 	void AcquirePropertiesFromDataTable();
 
-	// debug
-	UFUNCTION(BlueprintCallable)
-	void PrintProperties();
-
+	
 	// 初始化
 	UFUNCTION(BlueprintCallable)
 	virtual void ComponentInitialize() override;
-
+	
 	// 销毁
 	UFUNCTION(BlueprintCallable)
 	virtual void ComponentDestroy() override;
 
 	// 计算自己的攻击伤害
 	UFUNCTION(BlueprintCallable)
-	float GaveAttackDamage(float StanceDamage);
+	float GaveAttackDamage();
 	
 	// 计算别人对自己造成的伤害
 	UFUNCTION(BlueprintCallable)
@@ -49,7 +46,7 @@ public:
 	
 	// 修改属性值
 	UFUNCTION(BlueprintCallable)
-	bool ModifyProperty(const EProperty& PropertyType,const EModifyPropertyMethodType& ModifyMethod,const float InValue);
+	bool ModifyProperty(const EProperty PropertyType,const EModifyPropertyMethodType ModifyMethod,const float InValue);
 	
 	// 代理
 	UPROPERTY(BlueprintAssignable)
@@ -60,30 +57,36 @@ public:
 	
 	// 获取属性的值
 	UFUNCTION(BlueprintCallable)
-	inline float GetPropertyValue(const EProperty& PropertyType);
-private:
+	inline float GetPropertyValue(const EProperty PropertyType);
+
+	UPROPERTY(BlueprintReadOnly)
 	AActor* Owner;
+
+	UPROPERTY(BlueprintReadOnly)
 	UWeaponComponent* WeaponComponent;
-protected:
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FPropertyStruct> GetPropertyPool()const;
+
 	// 属性池
-	UPROPERTY(BlueprintReadWrite,Category = "Variables")
+	UPROPERTY(BlueprintReadOnly,Category = "Variables")
 	TArray<FPropertyStruct> PropertyPool;
-
+protected:
 	// 通过种类获得属性
-	const FPropertyStruct* GetPropertyByType(const EProperty& PropertyType);
+	const FPropertyStruct* GetPropertyByType(const EProperty PropertyType);
 
-	inline uint8 GetPropertyIndexByType(const EProperty& PropertyType);
+	inline uint8 GetPropertyIndexByType(const EProperty PropertyType);
 
 	// 获得百分比叠加之后的值
-	inline float GetRatioVal(float BaseVal,float Ratio);
+	float GetRatioVal(float BaseVal,float Ratio);
 
 	// 限制数值范围
-	inline float GetClampPropertyValue(uint8 PropertyIndex,float Infloat);
+	float GetClampPropertyValue(const uint8 PropertyIndex,const float Infloat);
+
+	bool CheckIsInit()const;
 public:	
 
 	UPropertyManager();
-	
-	
 protected:
 
 	virtual void BeginPlay() override;
@@ -94,7 +97,4 @@ public:
 };
 
 
-inline float UPropertyManager::GetRatioVal(float BaseVal, float Ratio)
-{
-	return BaseVal*(1+Ratio);
-}
+

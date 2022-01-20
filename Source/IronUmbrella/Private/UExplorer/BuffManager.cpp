@@ -2,6 +2,7 @@
 
 
 #include "UExplorer/BuffManager.h"
+#include "UExplorer/StateManager.h"
 
 // Sets default values for this component's properties
 UBuffManager::UBuffManager()
@@ -91,9 +92,9 @@ void UBuffManager::RemoveBuffByClass(TSubclassOf<ABuffBase> Class)
 	{
 		const auto Index = GetBuffIndexByClass(Class);
 		BuffPool.RemoveAt(Index);
-		if(BuffRunEvent.IsBound())
+		if(BuffFinishedEvent.IsBound())
 		{
-			BuffRunEvent.Broadcast(Class);
+			BuffFinishedEvent.Broadcast(Class);
 		}
 	}
 }
@@ -116,6 +117,7 @@ uint8 UBuffManager::GetBuffIndexByClass(TSubclassOf<ABuffBase> Class)
 	}
 	return Index;
 }
+
 
 
 // Called when the game starts

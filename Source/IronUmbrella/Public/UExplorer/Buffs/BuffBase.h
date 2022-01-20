@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BuffInterface.h"
-#include "GameFramework/Actor.h"
 #include "UExplorer/DataStructures.h"
-#include "UExplorer/DebugHelper.h"
+#include "GameFramework/Actor.h"
 #include "BuffBase.generated.h"
 
 UCLASS(Abstract)
@@ -42,8 +41,11 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BuffInfo")
 	uint8 Id;
 
+	
 	UDataTable* BuffTable;
+	
 	FString BuffDataAddr{"/Game/Private/UExplorer/DataTable/BuffTable.BuffTable"};
+	
 	void TryLoadDataTable();
 
 	// 发起者
@@ -54,12 +56,13 @@ public:
 	UPROPERTY(BlueprintReadOnly,Category="BuffInfo")
 	AActor* Effector;
 
-	UPROPERTY(BlueprintReadOnly,Category="BuffInfo")
+	UPROPERTY(BlueprintReadWrite,Category="BuffInfo")
 	class UBuffManager* BuffManager;
-	UPROPERTY(BlueprintReadOnly,Category="BuffInfo")
+	UPROPERTY(BlueprintReadWrite,Category="BuffInfo")
 	class UPropertyManager* PropertyManager;
-	UPROPERTY(BlueprintReadOnly,Category="BuffInfo")
+	UPROPERTY(BlueprintReadWrite,Category="BuffInfo")
 	class UStateManager* StateManager;
+	
 protected:
 	void UpdateBuffState();
 private:
