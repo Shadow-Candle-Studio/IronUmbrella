@@ -27,12 +27,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ComponentDestroy() override;
 	
-
 	UPROPERTY(BlueprintAssignable)
 	FOnStateChanged StateChangeEvent;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnCombatStateChanged CombatStateChangeEvent;
+	FOnCombatStateChanged CombatStateEvent;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnStunStateChanged StunStateChangeEvent;
@@ -44,7 +43,7 @@ public:
 	FOnDebuffDeActive DebuffDeActiveEvent;
 
 	UFUNCTION(BlueprintCallable)
-	void SetCurrentState(const EState& InState);
+	void SetCurrentState(const EState InState);
 
 	UFUNCTION(BlueprintCallable)
 	EState GetCurrentState()const;
@@ -53,24 +52,24 @@ public:
 	void ResetState();
 	
 	UFUNCTION(BlueprintCallable)
-	void SetCombatState(const ECombatState InCombat,uint8 AttackIndex);
+	void SetCombatState(const ECombatState InCombat,uint8 AttackIndex=1);
 
 	UFUNCTION(BlueprintCallable)
 	ECombatState GetCombatState()const;
 
 	UFUNCTION(BlueprintCallable)
-	void SetStunState(const EStunType& InStun);
+	void SetStunState(const EStunType InStun);
 
 	UFUNCTION(BlueprintCallable)
 	EStunType GetStunState()const;
-
 	
-	void AddDebuffState(const EDebuffState& InDebuff);
+	void AddDebuffState(const EDebuffState InDebuff);
 
-	void RemoveDebuff(const EDebuffState& InDebuff);
+	void RemoveDebuff(const EDebuffState InDebuff);
 
 	void ClearDebuffPool();
 private:
+	UPROPERTY()
 	AActor* Owner;
 	EState State;
 	ECombatState CombatState;

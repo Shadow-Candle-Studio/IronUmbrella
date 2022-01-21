@@ -37,11 +37,9 @@ public:
 	float StanceDamage;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TMap<uint8,float> StanceMultiplMap;
-	
-	UPROPERTY(BlueprintReadOnly)
 	class UStateManager* StateManager;
 
+	UFUNCTION(BlueprintCallable)
 	void ChangeStanceDamage(const ECombatState& InState,uint8 AttackIndex);
 	
 	bool GetWeaponInfoFromDataTable(uint8 Id);
@@ -54,20 +52,22 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetStanceDamage()const;
-
+	
 	UFUNCTION(BlueprintCallable)
-	TMap<uint8,float> GetStanceMultiMap()const;
+	float GetSpecialAtkDamage()const;
 	
 	UFUNCTION(BlueprintCallable)
 	bool ToggleWeaponById(uint8 Id);
-	
+
+	UFUNCTION(BlueprintCallable)
+	float GetParryMuptiplier(const EParryType ParryType);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };
+
 
 

@@ -9,10 +9,8 @@
 #include "Components/ActorComponent.h"
 #include "BuffManager.generated.h"
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuffRunning,TSubclassOf<ABuffBase>,BuffClass);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuffFinished,TSubclassOf<ABuffBase>,BuffClass);
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class IRONUMBRELLA_API UBuffManager : public UActorComponent,public IComponentInterface
@@ -38,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ClearBuffPool();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<ABuffBase*> GetBuffPool()const;
 	
 	void AddBuff(ABuffBase* BuffActor);
 	void RemoveBuffByClass(TSubclassOf<ABuffBase> Class);
@@ -47,9 +48,13 @@ public:
 protected:
 
 private:
+	UPROPERTY()
 	AActor* Owner;
+	UPROPERTY()
 	UPropertyManager* OwnerProperty;
+	UPROPERTY()
 	UStateManager* OwnerState;
+	UPROPERTY()
 	TArray<ABuffBase*> BuffPool;
 	
 protected:

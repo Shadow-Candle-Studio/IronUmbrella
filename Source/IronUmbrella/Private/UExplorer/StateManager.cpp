@@ -25,13 +25,21 @@ void UStateManager::ComponentDestroy()
 	Owner = nullptr;
 }
 
-void UStateManager::SetCurrentState(const EState& InState)
+void UStateManager::SetCurrentState(const EState InState)
 {
 	if(InState!=State)
 	{
 		StateChangeEvent.Broadcast(InState);
 	}
 	State = InState;
+	if(State!=EState::Attack)
+	{
+		SetCombatState(ECombatState::NULLState);
+	}
+	if(State!=EState::Stun)
+	{
+		SetStunState(EStunType::NULLState);
+	}
 }
 
 EState UStateManager::GetCurrentState() const
@@ -43,15 +51,12 @@ void UStateManager::ResetState()
 {
 	SetCurrentState(EState::Idle);
 	SetStunState(EStunType::NULLState);
-	SetCombatState(ECombatState::NULLState,0);
+	SetCombatState(ECombatState::NULLState,1);
 }
 
 void UStateManager::SetCombatState(const ECombatState InCombat, uint8 AttackIndex)
 {
-	if(CombatState!=InCombat)
-	{
-		CombatStateChangeEvent.Broadcast(InCombat,AttackIndex);
-	}
+	CombatStateEvent.Broadcast(InCombat,AttackIndex);
 	CombatState = InCombat;
 }
 
@@ -60,7 +65,7 @@ ECombatState UStateManager::GetCombatState() const
 	return CombatState;
 }
 
-void UStateManager::SetStunState(const EStunType& InStun)
+void UStateManager::SetStunState(const EStunType InStun)
 {
 	if(StunState!=InStun)
 	{
@@ -74,7 +79,7 @@ EStunType UStateManager::GetStunState() const
 	return StunState;
 }
 
-void UStateManager::AddDebuffState(const EDebuffState& InDebuff)
+void UStateManager::AddDebuffState(const EDebuffState InDebuff)
 {
 	// Debuff池里面没有包含该Debuff
 	if(!DebuffPool.Contains(InDebuff))
@@ -84,7 +89,7 @@ void UStateManager::AddDebuffState(const EDebuffState& InDebuff)
 	DebuffPool.Add(InDebuff);
 }
 
-void UStateManager::RemoveDebuff(const EDebuffState& InDebuff)
+void UStateManager::RemoveDebuff(const EDebuffState InDebuff)
 {
 	if(!DebuffPool.Contains(InDebuff))return;
 	DebuffPool.Remove(InDebuff);

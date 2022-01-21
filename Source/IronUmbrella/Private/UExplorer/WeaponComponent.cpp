@@ -10,9 +10,8 @@ UWeaponComponent::UWeaponComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
+	
 }
 
 void UWeaponComponent::ComponentInitialize()
@@ -23,7 +22,7 @@ void UWeaponComponent::ComponentInitialize()
 	if(tmp)
 	{
 		StateManager = Cast<UStateManager>(tmp);
-		StateManager->CombatStateChangeEvent.AddDynamic(this,&UWeaponComponent::ChangeStanceDamage);
+		StateManager->CombatStateEvent.AddDynamic(this,&UWeaponComponent::ChangeStanceDamage);
 	}
 }
 
@@ -31,10 +30,9 @@ void UWeaponComponent::ChangeStanceDamage(const ECombatState& InState,uint8 Atta
 {
 	if(InState==ECombatState::CommonAtk)
 	{
-		StanceDamage = *StanceMultiplMap.Find(AttackIndex);
+		StanceDamage = *WeaponInfo.StanceDamageMap.Find(AttackIndex);
 	}
 }
-
 
 void UWeaponComponent::ComponentDestroy()
 {
@@ -54,7 +52,6 @@ bool UWeaponComponent::GetWeaponInfoFromDataTable(uint8 Id)
 	if(InfoPtr)
 	{
 		WeaponInfo = *InfoPtr;
-		StanceMultiplMap = WeaponInfo.StanceDamageMap;
 		return true;
 	}else
 	{
@@ -78,14 +75,20 @@ float UWeaponComponent::GetStanceDamage() const
 	return StanceDamage;
 }
 
-TMap<uint8, float> UWeaponComponent::GetStanceMultiMap() const
+
+float UWeaponComponent::GetSpecialAtkDamage() const
 {
-	return StanceMultiplMap;
+	return WeaponInfo.SpecialAtkDamagMultiplier;
 }
 
 bool UWeaponComponent::ToggleWeaponById(uint8 Id)
 {
 	return GetWeaponInfoFromDataTable(Id);
+}
+
+float UWeaponComponent::GetParryMuptiplier(const EParryType ParryType)
+{
+	return *WeaponInfo.ParryMap.Find(ParryType);
 }
 
 // Called when the game starts

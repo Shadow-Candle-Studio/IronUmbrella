@@ -3,6 +3,8 @@
 
 #include "UExplorer/PropertyManager.h"
 
+#include "UExplorer/StateManager.h"
+
 void UPropertyManager::AcquirePropertiesFromDataTable()
 {
 	if(!PropertyData)return;
@@ -20,15 +22,25 @@ void UPropertyManager::AcquirePropertiesFromDataTable()
 
 void UPropertyManager::ComponentInitialize()
 {
+	PropertyPool.Empty();
 	AcquirePropertiesFromDataTable();
 	Owner = GetOwner();
-	UActorComponent* Component = Owner->GetComponentByClass(UWeaponComponent::StaticClass());
-	if(Component)
+	auto Ptr = Owner->GetComponentByClass(UWeaponComponent::StaticClass());
+	if(Ptr)
 	{
-		WeaponComponent = Cast<UWeaponComponent>(Component);
+		WeaponComponent = Cast<UWeaponComponent>(Ptr);
 	}else
 	{
 		UDebugHelper::PrintDebugMessage(TEXT("PropertyManager's weapon component is not valid"));	
+	}
+
+	Ptr = Owner->GetComponentByClass(UStateManager::StaticClass());
+	if(Ptr)
+	{
+		StateManager = Cast<UStateManager>(Ptr);
+	}else
+	{
+		UDebugHelper::PrintDebugMessage(TEXT("PropertyManager's state manager is not valid"));	
 	}
 }
 
@@ -46,6 +58,7 @@ float UPropertyManager::GaveAttackDamage()
 	const auto StanceDamageMultiplier = GetPropertyByType(EProperty::StanceDamageMultiplier);
 	const auto CritChance = GetPropertyByType(EProperty::StanceCritChanceMultiplier);
 	const auto CritDamage = GetPropertyByType(EProperty::StanceCritDamageMultiplier);
+	const auto CurrentAtkState = StateManager->GetCombatState();
 	float Damage = 0;
 	if(!BaseDamageMultiplier||!StanceDamageMultiplier||!CritChance||!CritDamage)return Damage;
 	const float WeaponDamage = WeaponComponent->GetWeaponDamage();
@@ -59,18 +72,28 @@ float UPropertyManager::GaveAttackDamage()
 	if(FMath::RandRange(0,100)<=100*CritChance->FinalVal)
 	{
 		CritFlag = true;
-		
 		Damage = GetRatioVal(Damage,CritDamage->FinalVal);
 	}
 	// Delegate
-	if(CritEvent.IsBound())
-	{
-		CritEvent.Broadcast(CritFlag,EDamageType::PhysicalDamage);
-	}
+	CritEvent.Broadcast(CritFlag,EDamageType::PhysicalDamage);
+	
 	
 	// *架势加成
-	Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+WeaponComponent->GetStanceDamage());
-	UE_LOG(LogTemp,Warning,TEXT("暴击:%d  伤害:%f"),CritFlag,Damage);
+	if(CurrentAtkState==ECombatState::CommonAtk)
+	{
+		Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+WeaponComponent->GetStanceDamage());
+		COMBAT_DEBUG("Damage = WeaponDamg:%.1f * BasaDaMul:%.1f * CritDamag:%.1f(IsCrit %d) * StanceMulti:%.1f + StanDamage:%.1f = %.1f",WeaponDamage,BaseDamageMultiplier->FinalVal,CritDamage->FinalVal,CritFlag,StanceDamageMultiplier->FinalVal,WeaponComponent->GetStanceDamage(),Damage);
+	}
+	else if(CurrentAtkState==ECombatState::SpecialAtk)
+	{
+		Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+WeaponComponent->GetSpecialAtkDamage());
+		COMBAT_DEBUG("Damage = WeaponDamg:%.1f * BasaDaMul:%.1f * CritDamag:%.1f(IsCrit %d) * StanceMulti:%.1f + StanDamage:%.1f = %.1f",WeaponDamage,BaseDamageMultiplier->FinalVal,CritDamage->FinalVal,CritFlag,StanceDamageMultiplier->FinalVal,WeaponComponent->GetStanceDamage(),Damage);
+	}
+	else if(CurrentAtkState==ECombatState::Parry)
+	{
+		Damage = GetRatioVal(Damage,StanceDamageMultiplier->FinalVal+WeaponComponent->GetStanceDamage());
+		COMBAT_DEBUG("Damage = WeaponDamg:%.1f * BasaDaMul:%.1f * CritDamag:%.1f(IsCrit %d) * StanceMulti:%.1f + StanDamage:%.1f = %.1f",WeaponDamage,BaseDamageMultiplier->FinalVal,CritDamage->FinalVal,CritFlag,StanceDamageMultiplier->FinalVal,WeaponComponent->GetStanceDamage(),Damage);
+	}
 	return Damage;
 }
 
@@ -102,7 +125,8 @@ float UPropertyManager::TakeDamage(const FTakeDamageInfo& DamageInfo)
 			//弹反成功
 			if(DamageInfo.ParrySuccess)
 			{
-				Damage-=Damage*DamageInfo.ParryValue;
+				const float ParryMulti = WeaponComponent->GetParryMuptiplier(DamageInfo.ParryInfo);
+				Damage -= Damage*ParryMulti;
 				Damage = FMath::Clamp<float>(Damage,0,Damage);
 			}
 		}
@@ -133,40 +157,30 @@ bool UPropertyManager::ModifyProperty(const EProperty PropertyType, const EModif
 	{
 		PropertyPool[PropertyIndex].InitVal+= InValue;
 		PropertyPool[PropertyIndex].InitVal = GetClampPropertyValue(PropertyIndex,PropertyPool[PropertyIndex].InitVal);
-		if(ValueChangedEvent.IsBound())
-		{
-			ValueChangedEvent.Broadcast(EPropertyValueType::InitValue);
-		}
+		ValueChangedEvent.Broadcast(EPropertyValueType::InitValue);
 	}
 	// 基础值百分比叠加
 	else if(ModifyMethod == EModifyPropertyMethodType::InitValRatioStack)
 	{
 		PropertyPool[PropertyIndex].InitVal = GetRatioVal(PropertyPool[PropertyIndex].InitVal,InValue);
 		PropertyPool[PropertyIndex].InitVal = GetClampPropertyValue(PropertyIndex,PropertyPool[PropertyIndex].InitVal);
-		if(ValueChangedEvent.IsBound())
-		{
-			ValueChangedEvent.Broadcast(EPropertyValueType::InitValue);
-		}
+		
+		ValueChangedEvent.Broadcast(EPropertyValueType::InitValue);
+		
 	}
 	// 最终值直接叠加
 	else if(ModifyMethod == EModifyPropertyMethodType::FinalValDirectStack)
 	{
 		PropertyPool[PropertyIndex].FinalVal+=InValue;
 		PropertyPool[PropertyIndex].FinalVal = GetClampPropertyValue(PropertyIndex,PropertyPool[PropertyIndex].FinalVal);
-		if(ValueChangedEvent.IsBound())
-		{
-			ValueChangedEvent.Broadcast(EPropertyValueType::FinalValue);
-		}
+		ValueChangedEvent.Broadcast(EPropertyValueType::FinalValue);
 	}
 	// 最终值百分比叠加
 	else if(ModifyMethod == EModifyPropertyMethodType::FinalValRatioStack)
 	{
 		PropertyPool[PropertyIndex].FinalVal = GetRatioVal(PropertyPool[PropertyIndex].FinalVal,InValue);
 		PropertyPool[PropertyIndex].FinalVal = GetClampPropertyValue(PropertyIndex,PropertyPool[PropertyIndex].FinalVal);
-		if(ValueChangedEvent.IsBound())
-		{
-			ValueChangedEvent.Broadcast(EPropertyValueType::FinalValue);
-		}
+		ValueChangedEvent.Broadcast(EPropertyValueType::FinalValue);
 	}
 	return true;
 }
@@ -213,7 +227,7 @@ float UPropertyManager::GetClampPropertyValue(const uint8 PropertyIndex,const fl
 
 bool UPropertyManager::CheckIsInit() const
 {
-	return PropertyPool.Num()>0&&Owner&&WeaponComponent;
+	return PropertyPool.Num()>0&&Owner&&WeaponComponent&&StateManager;
 }
 
 float UPropertyManager::GetRatioVal(const float BaseVal,const float Ratio)

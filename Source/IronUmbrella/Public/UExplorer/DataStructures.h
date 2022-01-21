@@ -74,18 +74,26 @@ enum class EDamageType:uint8
 	TrueDamage,
 };
 
+// 弹反信息
+UENUM(BlueprintType,Blueprintable)
+enum class EParryType:uint8
+{
+	CommonParry,		
+	PerfectParry		
+};
+
 // 得到的伤害信息
 USTRUCT(BlueprintType,Blueprintable)
 struct FTakeDamageInfo
 {
 	GENERATED_BODY()
-	FTakeDamageInfo():DamageType(EDamageType::PhysicalDamage),Damage(0.0f),GuardSuccess(false),ParrySuccess(false),ParryValue(0.0f),IgnoreArmor(false){};
+	FTakeDamageInfo():DamageType(EDamageType::PhysicalDamage),Damage(0.0f),GuardSuccess(false),ParrySuccess(false),ParryInfo(EParryType::CommonParry),IgnoreArmor(false){};
 	FTakeDamageInfo(const EDamageType& InDamageType,
 					float InDamage,
 					bool InGuard,
 					bool InParry,
-					float InPaVal,
-					bool InIgnoreArmor):DamageType(InDamageType),Damage(InDamage),GuardSuccess(InGuard),ParrySuccess(InParry),ParryValue(InPaVal),IgnoreArmor(InIgnoreArmor){};
+					EParryType ParryType,
+					bool InIgnoreArmor):DamageType(InDamageType),Damage(InDamage),GuardSuccess(InGuard),ParrySuccess(InParry),ParryInfo(ParryType),IgnoreArmor(InIgnoreArmor){};
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(DisplayName="伤害类型"))
 	EDamageType DamageType;
 
@@ -98,8 +106,8 @@ struct FTakeDamageInfo
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(DisplayName="弹反是否成功"))
 	bool ParrySuccess;
 	
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(DisplayName="弹反数值"))
-	float ParryValue;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(DisplayName="弹反信息"))
+	EParryType ParryInfo;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(DisplayName="是否无视护甲(减伤率)"))
 	bool IgnoreArmor;
@@ -118,12 +126,21 @@ enum class EWeaponType:uint8
 	GreatSword		UMETA(DisplayName="大剑"),
 };
 
+
+
 // 武器信息
 USTRUCT(BlueprintType,Blueprintable)
 struct FWeaponInfo:public FTableRowBase
 {
 	GENERATED_BODY();
-
+	FWeaponInfo():WeaponName(FName("")),WeaponType(EWeaponType::Axe),WeaponDamage(10.f),GuardMultiplier(0.2f),SpecialAtkDamagMultiplier(0.5f)
+	{
+		StanceDamageMap.Add(1,0.3);
+		StanceDamageMap.Add(2,0.4);
+		StanceDamageMap.Add(3,0.5);
+		ParryMap.Add(EParryType::CommonParry,0.3);
+		ParryMap.Add(EParryType::PerfectParry,1);
+	};
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName WeaponName;
 
@@ -138,6 +155,12 @@ struct FWeaponInfo:public FTableRowBase
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "架势伤害系数"))
 	TMap<uint8,float> StanceDamageMap;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "特殊攻击伤害系数"))
+	float SpecialAtkDamagMultiplier;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "武器弹反系数"))
+	TMap<EParryType,float> ParryMap;  
 };
 
 

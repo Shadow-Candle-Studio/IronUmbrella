@@ -53,6 +53,11 @@ void UBuffManager::ClearBuffPool()
 	}
 }
 
+TArray<ABuffBase*> UBuffManager::GetBuffPool() const
+{
+	return BuffPool;
+}
+
 void UBuffManager::AcquiredBuff(TSubclassOf<ABuffBase> BuffClass, AActor* Effector,AActor* Caster)
 {
 	if(!BuffClass||!Effector)return;
@@ -80,10 +85,7 @@ void UBuffManager::AcquiredBuff(TSubclassOf<ABuffBase> BuffClass, AActor* Effect
 void UBuffManager::AddBuff(ABuffBase* BuffActor)
 {
 	BuffPool.Add(BuffActor);
-	if(BuffRunEvent.IsBound())
-	{
-		BuffRunEvent.Broadcast(BuffActor->StaticClass());
-	}
+	BuffRunEvent.Broadcast(BuffActor->StaticClass());
 }
 
 void UBuffManager::RemoveBuffByClass(TSubclassOf<ABuffBase> Class)
@@ -92,10 +94,7 @@ void UBuffManager::RemoveBuffByClass(TSubclassOf<ABuffBase> Class)
 	{
 		const auto Index = GetBuffIndexByClass(Class);
 		BuffPool.RemoveAt(Index);
-		if(BuffFinishedEvent.IsBound())
-		{
-			BuffFinishedEvent.Broadcast(Class);
-		}
+		BuffFinishedEvent.Broadcast(Class);
 	}
 }
 
