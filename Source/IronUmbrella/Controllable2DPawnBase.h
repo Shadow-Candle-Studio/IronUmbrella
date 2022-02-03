@@ -9,6 +9,7 @@ Description: This file contains the declaration of: TriggerbleEventInterface,  A
 #include "CoreMinimal.h"
 #include "AllInputEventsInterface.h"
 #include "AllStructuresAndEnums.h"
+#include "IronMobileObject.h"
 #include "Pixel2DCharacter.h"
 
 #include "Controllable2DPawnBase.generated.h"
@@ -24,7 +25,7 @@ Description: This file contains the declaration of: TriggerbleEventInterface,  A
  * implemented the basic facility of supporting input processing
  */
 UCLASS(BlueprintType,Blueprintable,ShowCategories=("Pixel2D character"))
-class IRONUMBRELLA_API AControllable2DPawnBase : public APixel2DCharacter, public IAllInputEventsInterface
+class IRONUMBRELLA_API AControllable2DPawnBase : public AIronMobileObject, public IAllInputEventsInterface
 {
 	GENERATED_BODY()
 

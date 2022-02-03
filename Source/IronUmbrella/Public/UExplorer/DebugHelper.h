@@ -1,4 +1,13 @@
-﻿#pragma once
+﻿
+/************************************************* 
+Copyright: All rights reserved for Shadow Candle Studio 
+Author: U
+Date:2022-02-3 
+Description:
+Basic features supported:
+1.Simple debug tools
+**************************************************/ 
+#pragma once
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "DebugHelper.generated.h"

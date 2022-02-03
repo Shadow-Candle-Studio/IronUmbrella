@@ -1,5 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/************************************************* 
+Copyright: All rights reserved for Shadow Candle Studio 
+Author:  U
+Date:2022-02-3 
+Description: UStateManager
+Basic features supported:
+1. store all states information: idle,attack, ....etc
+**************************************************/ 
 #pragma once
 
 #include "CoreMinimal.h"

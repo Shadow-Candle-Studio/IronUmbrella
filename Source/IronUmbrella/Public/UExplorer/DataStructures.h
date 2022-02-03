@@ -1,9 +1,41 @@
-﻿#pragma once
+﻿
+/************************************************* 
+Copyright: All rights reserved for Shadow Candle Studio 
+Author: U
+Date:2022-02-3 
+Description:
+Basic features supported:
+EProperty,
+EModifyPropertyMethodType,
+FPropertyStruct,
+EPropertyValueType,
+EDamageType,
+EParryType,
+FTakeDamageInfo,
+EWeaponType,
+FWeaponInfo,
+EState,
+ECombatState,
+EStunType,
+EDebuffState,
+EBuffLifespanType,
+EBuffRarity,
+EBuffStackMethod,
+EBuffState,
+EBuffStatus,
+EBuffTriggerMethod,
+EBuffTimeTriggerMethod,
+EBuffType,
+FBuffLifespanInfo,
+FBuffTimeTriggerInfo,
+FBuffInfo
+**************************************************/ 
+#pragma once
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "DataStructures.generated.h"
 
-
+//enum class of the values used to calculate damagevalue
 UENUM(BlueprintType,Blueprintable)
 enum class EProperty:uint8
 {
@@ -33,7 +65,7 @@ enum class EModifyPropertyMethodType:uint8
 	FinalValRatioStack,
 };
 
-//属性结构
+//single property structure
 USTRUCT(BlueprintType,Blueprintable)
 struct FPropertyStruct:public FTableRowBase
 {
@@ -55,7 +87,7 @@ struct FPropertyStruct:public FTableRowBase
 	float MinVal;
 };
 
-// 属性数值种类
+//property value type
 UENUM(BlueprintType,Blueprintable)
 enum class EPropertyValueType:uint8
 {
@@ -65,7 +97,7 @@ enum class EPropertyValueType:uint8
 	MinValue
 };
 
-// 伤害类型
+//damage type
 UENUM(BlueprintType,Blueprintable)
 enum class EDamageType:uint8
 {
@@ -74,7 +106,7 @@ enum class EDamageType:uint8
 	TrueDamage,
 };
 
-// 弹反信息
+//Parry type
 UENUM(BlueprintType,Blueprintable)
 enum class EParryType:uint8
 {
@@ -82,7 +114,7 @@ enum class EParryType:uint8
 	PerfectParry		
 };
 
-// 得到的伤害信息
+// Damage info
 USTRUCT(BlueprintType,Blueprintable)
 struct FTakeDamageInfo
 {
@@ -115,7 +147,7 @@ struct FTakeDamageInfo
 
 
 
-// 武器类型
+//weapon type
 UENUM(BlueprintType,Blueprintable)
 enum class EWeaponType:uint8
 {
@@ -128,7 +160,7 @@ enum class EWeaponType:uint8
 
 
 
-// 武器信息
+// weapon info
 USTRUCT(BlueprintType,Blueprintable)
 struct FWeaponInfo:public FTableRowBase
 {
@@ -164,7 +196,7 @@ struct FWeaponInfo:public FTableRowBase
 };
 
 
-// 状态
+// States
 UENUM(BlueprintType,Blueprintable)
 enum class EState:uint8
 {
