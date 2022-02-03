@@ -21,7 +21,7 @@ a Value system
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageCritEvent,bool,bIsCrit,EDamageType,DamageType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnValueChangedEvent,EPropertyValueType,ChangedValueType);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( DisplayName="CombatValueManager",ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class IRONUMBRELLA_API UPropertyManager : public UActorComponent,public IComponentInterface
 {
 	GENERATED_BODY()

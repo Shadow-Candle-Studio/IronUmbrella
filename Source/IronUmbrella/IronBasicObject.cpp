@@ -29,7 +29,7 @@ void AIronBasicObject::BeginPlay()
 void AIronBasicObject::OnCapsuleComponentHit_Implementation(UPrimitiveComponent* hitCompo, AActor* OtherActor,
 	UPrimitiveComponent* OtherCompo, FVector NormalImpulse, const FHitResult& SweepResult)
 {
-	YellSomething("I AM hit")
+	//YellSomething("I AM hit")
 	RepairYlineOffset();
 }
 
