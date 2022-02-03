@@ -10,17 +10,28 @@ Basic features supported:
 
 #include "CoreMinimal.h"
 #include "IronBasicObject.h"
-#include "UObject/Object.h"
+
 #include "IronStaticObject.generated.h"
 
 /**
- * 
+ * Static objects that can be simply placed in the game scene
  */
 UCLASS(BlueprintType,Blueprintable,ShowCategories=("Pixel2D character"))
-class IRONUMBRELLA_API AIronStaticObject : public AIronBasicObject
+class IRONUMBRELLA_API AIronStaticObject : public AActor
 {
 	GENERATED_BODY()
+private:
+	// Name of the Sprite component
+	const static FName PixelComponentName;
+
+	//pixel cartoon
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UPixel2DComponent* PixelComponent;
 public:
 	AIronStaticObject();
-	virtual void BeginPlay() override;
+	
+	virtual void PostInitializeComponents() override;
+
+	/** Returns Sprite subobject **/
+	FORCEINLINE class UPixel2DComponent* GetSprite() const { return PixelComponent; }
 };
