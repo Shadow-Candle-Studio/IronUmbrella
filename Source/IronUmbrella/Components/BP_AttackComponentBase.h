@@ -39,7 +39,9 @@ protected:
 	//Timer function for checking the sprite frame that contains end socket, attack socket or other useful information
 	void TimerFunc_CheckPossibleAttacks();
 	//function for processing the hit results
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void ProcessAttackHitResults(const TArray<FHitResult>& ResultsToProcess);
+	void ProcessAttackHitResults_Implementation(const TArray<FHitResult>& ResultsToProcess);
 	//function for checking whether the sprite contains valid attacking animation
 	bool CheckIfAnyAttackExists() const;
 	//float value that defines the boundary limit of the existence of attack action or not
