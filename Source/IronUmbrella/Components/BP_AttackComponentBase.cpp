@@ -114,7 +114,7 @@ void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 	}
 }
 
-void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& ResultsToProcess)
+void UBP_AttackComponentBase::ProcessAttackHitResults_Implementation(const TArray<FHitResult>& ResultsToProcess)
 {
 	for(auto &p:ResultsToProcess)
 	{
@@ -130,15 +130,17 @@ void UBP_AttackComponentBase::ProcessAttackHitResults(const TArray<FHitResult>& 
 			enableAttackVFX(m);
 			UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
 			if(Cast<AControllable2DPawnBase>(OwningChaRef)!=nullptr)
-			UGameplayStatics::ApplyDamage(p.Actor.Get(),
-				100,
-				Cast<AControllable2DPawnBase>(OwningChaRef)->GetController(),
-				OwningChaRef,
-				UDamageType::StaticClass());
+				UGameplayStatics::ApplyDamage(p.Actor.Get(),
+					100,
+					Cast<AControllable2DPawnBase>(OwningChaRef)->GetController(),
+					OwningChaRef,
+					UDamageType::StaticClass());
 		}
 		
 	}
 }
+
+
 
 bool UBP_AttackComponentBase::CheckIfAnyAttackExists() const
 {

@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/************************************************* 
+Copyright: All rights reserved for Shadow Candle Studio 
+Author: U
+Date:2022-02-3 
+Description:
+Basic features supported:
+1. get the calculated damage value
+a Value system
+**************************************************/ 
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,7 +21,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageCritEvent,bool,bIsCrit,EDamageType,DamageType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnValueChangedEvent,EPropertyValueType,ChangedValueType);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( DisplayName="CombatValueManager",ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class IRONUMBRELLA_API UPropertyManager : public UActorComponent,public IComponentInterface
 {
 	GENERATED_BODY()
