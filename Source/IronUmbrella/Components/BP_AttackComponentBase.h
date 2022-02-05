@@ -51,7 +51,13 @@ protected:
 	//float value that defines the boundary limit of the existence of attack action or not
 	float AttacksocketDistAccuracy=1.0f;
 	//should we pause the timer to save computing resources
-	
+	UFUNCTION(BlueprintCallable)
+	void StopAttacking()
+	{
+		FTimerManager& TimerManagerInUse=GetWorld()->GetTimerManager();
+		TimerManagerInUse.PauseTimer(EnableAttackTimerHandle);
+		FOnAttackEndEvent.Broadcast();
+	}
 
 	//Niagara system component for showing the blade vfx
 	UNiagaraComponent* BladeTrailVFX;
@@ -79,7 +85,8 @@ public:
 	FName AttackEndSocketName="AttackEnd";
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float fAttackEndSignRelativeXvalue=1000.0f;
-	
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	float fAttackEndSignRelativeXPrecision=1000.0f;
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void enableAttackVFX(FTransform Trans);
 	void enableAttackVFX_Implementation(FTransform Trans);
