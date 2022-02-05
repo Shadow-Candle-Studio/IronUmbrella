@@ -58,16 +58,13 @@ void UBP_AttackComponentBase::BeginPlay()
 
 void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 {
-	
+	//UE_LOG(LogTemp,Warning,L"Chech Timer running")
 	//pause the timer if the timer is active and we have a attack end sign
-	if(CheckIfHasAttackEndSign()&&
-		GetWorld()->GetTimerManager().IsTimerActive(EnableAttackTimerHandle))
-	{
-		//UE_LOG(LogTemp,Warning,L"Pause timer")
-		GetWorld()->GetTimerManager().PauseTimer(EnableAttackTimerHandle);
-		YellSomething("We Attack end")
-		
-	}
+	// if(CheckIfHasAttackEndSign())
+	// {
+	// 	StopAttackingCheck();
+	// 	
+	// }
 	//process all attack collision
 	if(CheckIfAnyAttackExists())
 	{
@@ -168,12 +165,14 @@ bool UBP_AttackComponentBase::CheckIfHasAttackEndSign() const
 {
 	if(OwnerPixelCompoRef!=nullptr&&OwnerPixelCompoRef->HasAnySockets())
 	{
-		if(abs((OwnerPixelCompoRef->GetSocketLocation(AttackEndSocketName)-
-			OwnerPixelCompoRef->GetComponentLocation()).X)==
-			fAttackEndSignRelativeXvalue)
+		if(OwnerPixelCompoRef->DoesSocketExist(AttackEndSocketName))
 		{
-			FOnAttackEndEvent.Broadcast();
-			return true;
+			FVector MinusVec=OwnerPixelCompoRef->GetSocketLocation(AttackEndSocketName)-OwnerPixelCompoRef->GetComponentLocation();
+			if(abs(MinusVec.Size()-fAttackEndSignRelativeXvalue)<fAttackEndSignRelativeXPrecision)
+			{
+				
+				return true;
+			}
 		}
 		
 	}
@@ -187,7 +186,7 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 	{
 		
 		//if the timer is not active which means that it is paused
-		if(!TimerManagerInUse.IsTimerActive(EnableAttackTimerHandle))
+		if(TimerManagerInUse.IsTimerPaused(EnableAttackTimerHandle))
 		{
 			//Continue the attack scanning
 			TimerManagerInUse.UnPauseTimer(EnableAttackTimerHandle);
@@ -195,6 +194,7 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 	}
 	else
 	{
+		
 		//UE_LOG(LogTemp,Warning,L"New timer")
 		TimerManagerInUse.SetTimer
 		(EnableAttackTimerHandle,
