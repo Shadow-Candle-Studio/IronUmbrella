@@ -12,8 +12,12 @@ Description: This file contains the declaration of:UBP_MovementComponentBase
 
 #include "BP_MovementComponentBase.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnJumpStateUpdate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDashStateUpdate);
+
 //responsible for movement of a controllable2Dpawnbase instance
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent),Blueprintable)
 class IRONUMBRELLA_API UBP_MovementComponentBase : public UActorComponent
 {
 	GENERATED_BODY()
@@ -44,6 +48,12 @@ public:
 	void Jump(float JumpVelocity);
 	void Jump_Implementation(float JumpVelocity);
 
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDashStateUpdate Delegate_DashStateToUpload;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnJumpStateUpdate Delegate_JumpStateToUpload;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -65,7 +75,8 @@ protected:
 	uint8 JumpCount=0;
 
 	//Check dash over is a designed-for-timer function to
-	//stop dashing when specific requirements are met 
+	//stop dashing when specific requirements are met
+	
 	void CheckDashOver();
 
 	//Check jump over repeatedly detects the velocity on Z axis and

@@ -58,12 +58,15 @@ void UBP_AttackComponentBase::BeginPlay()
 
 void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 {
+	
 	//pause the timer if the timer is active and we have a attack end sign
 	if(CheckIfHasAttackEndSign()&&
 		GetWorld()->GetTimerManager().IsTimerActive(EnableAttackTimerHandle))
 	{
 		//UE_LOG(LogTemp,Warning,L"Pause timer")
 		GetWorld()->GetTimerManager().PauseTimer(EnableAttackTimerHandle);
+		YellSomething("We Attack end")
+		
 	}
 	//process all attack collision
 	if(CheckIfAnyAttackExists())
@@ -169,6 +172,7 @@ bool UBP_AttackComponentBase::CheckIfHasAttackEndSign() const
 			OwnerPixelCompoRef->GetComponentLocation()).X)==
 			fAttackEndSignRelativeXvalue)
 		{
+			FOnAttackEndEvent.Broadcast();
 			return true;
 		}
 		
@@ -181,10 +185,11 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 	FTimerManager& TimerManagerInUse=GetWorld()->GetTimerManager();
 	if(TimerManagerInUse.TimerExists(EnableAttackTimerHandle))
 	{
+		
 		//if the timer is not active which means that it is paused
 		if(!TimerManagerInUse.IsTimerActive(EnableAttackTimerHandle))
 		{
-			//UE_LOG(LogTemp,Warning,L"Unpause timer")
+			//Continue the attack scanning
 			TimerManagerInUse.UnPauseTimer(EnableAttackTimerHandle);
 		}
 	}

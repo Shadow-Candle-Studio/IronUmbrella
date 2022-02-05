@@ -149,28 +149,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BP_CopySignsToAnim(UPARAM(ref) FS_InputKeyInfo& Source,UPARAM(ref) FS_InputKeyInfo& Dest);
 
+
+	//Hide the player
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void Appear(bool bShow);
 	void Appear_Implementation(bool bShow);
 
+	//change the facing direction right or left
 	UFUNCTION(BlueprintCallable)
 	void ChangeFaceDirection(bool bFaceRight);
 
 	UFUNCTION(BlueprintCallable)
 	UPrimitiveComponent* GetYourCharacterSprite() const;
-
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isMoving;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isMovingRight;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isJumping;
+	//Detect whether this pawn is in air
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
 	bool isFalling;
+	//Detect whether this pawn is dashing
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
 	bool isDashing=false;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isplayerDead;
+	//true is right, false is left
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
 	bool LastDirection;
 	
