@@ -58,13 +58,6 @@ void UBP_AttackComponentBase::BeginPlay()
 
 void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 {
-	//UE_LOG(LogTemp,Warning,L"Chech Timer running")
-	//pause the timer if the timer is active and we have a attack end sign
-	// if(CheckIfHasAttackEndSign())
-	// {
-	// 	StopAttackingCheck();
-	// 	
-	// }
 	//process all attack collision
 	if(CheckIfAnyAttackExists())
 	{
@@ -161,23 +154,7 @@ bool UBP_AttackComponentBase::CheckIfAnyAttackExists() const
 	return false;
 }
 
-bool UBP_AttackComponentBase::CheckIfHasAttackEndSign() const
-{
-	if(OwnerPixelCompoRef!=nullptr&&OwnerPixelCompoRef->HasAnySockets())
-	{
-		if(OwnerPixelCompoRef->DoesSocketExist(AttackEndSocketName))
-		{
-			FVector MinusVec=OwnerPixelCompoRef->GetSocketLocation(AttackEndSocketName)-OwnerPixelCompoRef->GetComponentLocation();
-			if(abs(MinusVec.Size()-fAttackEndSignRelativeXvalue)<fAttackEndSignRelativeXPrecision)
-			{
-				
-				return true;
-			}
-		}
-		
-	}
-	return false;
-}
+
 
 void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 {

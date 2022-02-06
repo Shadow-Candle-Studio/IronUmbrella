@@ -72,8 +72,7 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void TryMeleeAttack();
 	void TryMeleeAttack_Implementation();
-	UFUNCTION(BlueprintCallable)
-	bool CheckIfHasAttackEndSign() const;
+	
 	//Sphere trace radius used for multi-sphere trace function
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float SphereTraceRadius=2.0f;
@@ -81,12 +80,6 @@ public:
 	virtual void DestroyComponent(bool bPromoteChildren) override;
 	
 	
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	FName AttackEndSocketName="AttackEnd";
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	float fAttackEndSignRelativeXvalue=1000.0f;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	float fAttackEndSignRelativeXPrecision=1000.0f;
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void enableAttackVFX(FTransform Trans);
 	void enableAttackVFX_Implementation(FTransform Trans);
@@ -94,4 +87,6 @@ public:
 	//Niagara system pointer to the template BP of blade VFX
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UNiagaraSystem* TrailVFXtemplate;
+
+	
 };

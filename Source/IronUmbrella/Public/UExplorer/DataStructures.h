@@ -192,7 +192,7 @@ struct FWeaponInfo:public FTableRowBase
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "特殊攻击伤害系数"))
 	float SpecialAtkDamagMultiplier;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "武器弹反系数"))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "武器弹反减伤率"))
 	TMap<EParryType,float> ParryMap;  
 };
 
