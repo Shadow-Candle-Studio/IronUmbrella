@@ -128,6 +128,8 @@ void UBP_AttackComponentBase::ProcessAttackHitResults_Implementation(const TArra
 					Cast<AControllable2DPawnBase>(OwningChaRef)->GetController(),
 					OwningChaRef,
 					UDamageType::StaticClass());
+			
+			enableAttackVFX(FTransform(FQuat::Identity,p.ImpactPoint));
 		}
 		
 	}
@@ -166,6 +168,7 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 		if(TimerManagerInUse.IsTimerPaused(EnableAttackTimerHandle))
 		{
 			//Continue the attack scanning
+			YellSomething("Attack check Began again!")
 			TimerManagerInUse.UnPauseTimer(EnableAttackTimerHandle);
 		}
 	}
