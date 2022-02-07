@@ -58,13 +58,6 @@ void UBP_AttackComponentBase::BeginPlay()
 
 void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 {
-	//pause the timer if the timer is active and we have a attack end sign
-	if(CheckIfHasAttackEndSign()&&
-		GetWorld()->GetTimerManager().IsTimerActive(EnableAttackTimerHandle))
-	{
-		//UE_LOG(LogTemp,Warning,L"Pause timer")
-		GetWorld()->GetTimerManager().PauseTimer(EnableAttackTimerHandle);
-	}
 	//process all attack collision
 	if(CheckIfAnyAttackExists())
 	{
@@ -161,35 +154,24 @@ bool UBP_AttackComponentBase::CheckIfAnyAttackExists() const
 	return false;
 }
 
-bool UBP_AttackComponentBase::CheckIfHasAttackEndSign() const
-{
-	if(OwnerPixelCompoRef!=nullptr&&OwnerPixelCompoRef->HasAnySockets())
-	{
-		if(abs((OwnerPixelCompoRef->GetSocketLocation(AttackEndSocketName)-
-			OwnerPixelCompoRef->GetComponentLocation()).X)==
-			fAttackEndSignRelativeXvalue)
-		{
-			return true;
-		}
-		
-	}
-	return false;
-}
+
 
 void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 {
 	FTimerManager& TimerManagerInUse=GetWorld()->GetTimerManager();
 	if(TimerManagerInUse.TimerExists(EnableAttackTimerHandle))
 	{
+		
 		//if the timer is not active which means that it is paused
-		if(!TimerManagerInUse.IsTimerActive(EnableAttackTimerHandle))
+		if(TimerManagerInUse.IsTimerPaused(EnableAttackTimerHandle))
 		{
-			//UE_LOG(LogTemp,Warning,L"Unpause timer")
+			//Continue the attack scanning
 			TimerManagerInUse.UnPauseTimer(EnableAttackTimerHandle);
 		}
 	}
 	else
 	{
+		
 		//UE_LOG(LogTemp,Warning,L"New timer")
 		TimerManagerInUse.SetTimer
 		(EnableAttackTimerHandle,

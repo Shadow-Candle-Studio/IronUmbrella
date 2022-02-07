@@ -156,6 +156,7 @@ enum class EWeaponType:uint8
 	Hammer			UMETA(DisplayName="铁锤"),
 	Axe				UMETA(DisplayName="斧头"),
 	GreatSword		UMETA(DisplayName="大剑"),
+	Fist            UMETA(DisplayName="拳套")
 };
 
 
@@ -179,7 +180,7 @@ struct FWeaponInfo:public FTableRowBase
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	EWeaponType WeaponType;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName="武器基础伤害"))
 	float WeaponDamage;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName="武器格挡系数"))
@@ -191,7 +192,7 @@ struct FWeaponInfo:public FTableRowBase
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "特殊攻击伤害系数"))
 	float SpecialAtkDamagMultiplier;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "武器弹反系数"))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(DisplayName = "武器弹反减伤率"))
 	TMap<EParryType,float> ParryMap;  
 };
 
@@ -200,33 +201,37 @@ struct FWeaponInfo:public FTableRowBase
 UENUM(BlueprintType,Blueprintable)
 enum class EState:uint8
 {
-	Idle,			
-	Walk,			
-	Run,
-	Jump,
-	Attack,
-	ToggleWeapon,
-	GuardStance,
-	Dodge,
-	Stun,
-	Dead
+	//locomotion area
+	Idle    UMETA(DisplayName="闲置"),			
+	Walking UMETA(DisplayName="走动"),			
+	Running UMETA(DisplayName="跑动"),
+	Jumping UMETA(DisplayName="跳跃"),
+	Dashing UMETA(DisplayName="燕闪"),
+	//attack area
+	Attacking  UMETA(DisplayName="攻击"), 
+	//SwitchWeaponAttacking UMETA(DisplayName="切换武器攻击"),
+	//GuardStance UMETA(DisplayName="瞬时防御"),
+	
+	Stun UMETA(DisplayName="受击"),
+	Dead UMETA(DisplayName="死翘翘")
 };
 
 UENUM(BlueprintType,Blueprintable)
 enum class ECombatState:uint8
 {
-	CommonAtk,	
-	SpecialAtk,
-	Parry,
+	CommonAtk UMETA(DisplayName="普通X123攻击"),	
+	SpecialAtk UMETA(DisplayName="特殊攻击"),
+	SwitchWeaponTransitionAtk UMETA(DisplayName="切换武器攻击"),
+	Parry UMETA(DisplayName="弹反"),
 	NULLState
 };
 
 UENUM(BlueprintType,Blueprintable)
 enum class EStunType:uint8
 {
-	Fear,
-	Stiff,
-	StepBack,
+	Fear UMETA(DisplayName="恐惧"),
+	Stiff UMETA(DisplayName="僵硬"),
+	StepBack UMETA(DisplayName="击退"),
 	Root,
 	NULLState
 };
@@ -245,36 +250,36 @@ enum class EDebuffState:uint8
 UENUM(BlueprintType,Blueprintable)
 enum class EBuffLifespanType:uint8
 {
-	Permanent,
-	Duration,
-	Counter,
+	Permanent UMETA(DisplayName="永久"),
+	Duration UMETA(DisplayName="持续时间"),
+	Counter UMETA(DisplayName="次数"),
 };
 
 
 UENUM(BlueprintType,Blueprintable)
 enum class EBuffRarity:uint8
 {
-	Normal,
-	Rare,
-	Legend
+	Normal UMETA(DisplayName="普通"),
+	Rare UMETA(DisplayName="稀有"),
+	Legend UMETA(DisplayName="史诗")
 };
 
 UENUM(BlueprintType,Blueprintable)
 enum class EBuffStackMethod:uint8
 {
-	Stackable,
-	Override,
-	Refresh
+	Stackable UMETA(DisplayName="可堆叠"),
+	Override UMETA(DisplayName="覆盖式"),
+	Refresh UMETA(DisplayName="更新式")
 };
 
 
 UENUM(BlueprintType,Blueprintable)
 enum class EBuffState:uint8
 {
-	Waiting,
-	Running,
-	Finished,
-	Dead,
+	Waiting UMETA(DisplayName="等待"),
+	Running UMETA(DisplayName="运行中"),
+	Finished UMETA(DisplayName="结束"),
+	Dead UMETA(DisplayName="销毁"),
 };
 
 UENUM(BlueprintType,Blueprintable)

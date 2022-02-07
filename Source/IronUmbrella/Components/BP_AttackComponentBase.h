@@ -11,6 +11,10 @@ Description: This file contains the declaration of:UBP_AttackComponentBase
 #include "Components/ActorComponent.h"
 #include "BP_AttackComponentBase.generated.h"
 
+
+
+//delegates of attack component
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 /*
  *UBP_AttackComponentBase is responsible for
  *implementing various ways of attacking: Melee Attack ,
@@ -47,12 +51,20 @@ protected:
 	//float value that defines the boundary limit of the existence of attack action or not
 	float AttacksocketDistAccuracy=1.0f;
 	//should we pause the timer to save computing resources
-	bool CheckIfHasAttackEndSign() const;
+	UFUNCTION(BlueprintCallable)
+	void StopAttacking()
+	{
+		FTimerManager& TimerManagerInUse=GetWorld()->GetTimerManager();
+		TimerManagerInUse.PauseTimer(EnableAttackTimerHandle);
+		FOnAttackEndEvent.Broadcast();
+	}
 
 	//Niagara system component for showing the blade vfx
 	UNiagaraComponent* BladeTrailVFX;
 	
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnAttackEnd FOnAttackEndEvent;
 	//Attack sockets prefix 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	FName AttackSocketNamePrefix="Attack_";
@@ -68,11 +80,6 @@ public:
 	virtual void DestroyComponent(bool bPromoteChildren) override;
 	
 	
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	FName AttackEndSocketName="AttackEnd";
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	float fAttackEndSignRelativeXvalue=1000.0f;
-	
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void enableAttackVFX(FTransform Trans);
 	void enableAttackVFX_Implementation(FTransform Trans);
@@ -80,4 +87,6 @@ public:
 	//Niagara system pointer to the template BP of blade VFX
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UNiagaraSystem* TrailVFXtemplate;
+
+	
 };
