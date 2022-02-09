@@ -155,20 +155,15 @@ public:
 	void Appear(bool bShow);
 	void Appear_Implementation(bool bShow);
 
-	//change the facing direction right or left
-	UFUNCTION(BlueprintCallable)
-	void ChangeFaceDirection(bool bFaceRight);
+	
 
-	UFUNCTION(BlueprintCallable)
-	UPrimitiveComponent* GetYourCharacterSprite() const;
+	
 	//Detect whether this pawn is in air
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
 	bool isFalling;
 	//Detect whether this pawn is dashing
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
 	bool isDashing=false;
-	//true is right, false is left
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool LastDirection;
+	
 	
 };

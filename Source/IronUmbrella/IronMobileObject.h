@@ -20,7 +20,12 @@ UCLASS(BlueprintType,Blueprintable,ShowCategories=("Pixel2D character"))
 class IRONUMBRELLA_API AIronMobileObject : public AIronBasicObject
 {
 	GENERATED_BODY()
-
+	//change the facing direction right or left
+	//UFUNCTION(BlueprintCallable)
+	void ChangeFaceDirection(bool bFaceRight);
+	//true is right, false is left
+	bool LastDirection;
 public:
-	
+	UFUNCTION(BlueprintCallable)
+	void AutoAdaptSpriteToVelocityDirection(float VelocityXValue);
 };

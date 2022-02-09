@@ -40,5 +40,6 @@ public:
 	void OnCapsuleComponentHit(class UPrimitiveComponent* hitCompo,class AActor* OtherActor ,
 		class UPrimitiveComponent* OtherCompo,
 		FVector NormalImpulse,const FHitResult& SweepResult);
-	
+	UFUNCTION(BlueprintCallable)
+	UPrimitiveComponent* GetYourCharacterSprite() const;
 };

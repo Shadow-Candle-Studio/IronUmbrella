@@ -121,7 +121,7 @@ void UBP_AttackComponentBase::ProcessAttackHitResults_Implementation(const TArra
 			// }
 			FTransform m(FRotator::ZeroRotator,p.ImpactPoint,FVector(0.01));
 			enableAttackVFX(m);
-			UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
+			//UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
 			if(Cast<AControllable2DPawnBase>(OwningChaRef)!=nullptr)
 				UGameplayStatics::ApplyDamage(p.Actor.Get(),
 					100,
@@ -168,7 +168,7 @@ void UBP_AttackComponentBase::TryMeleeAttack_Implementation()
 		if(TimerManagerInUse.IsTimerPaused(EnableAttackTimerHandle))
 		{
 			//Continue the attack scanning
-			YellSomething("Attack check Began again!")
+			//YellSomething("Attack check Began again!")
 			TimerManagerInUse.UnPauseTimer(EnableAttackTimerHandle);
 		}
 	}
