@@ -76,7 +76,6 @@ protected:
 
 	//Check dash over is a designed-for-timer function to
 	//stop dashing when specific requirements are met
-	
 	void CheckDashOver();
 
 	//Check jump over repeatedly detects the velocity on Z axis and
