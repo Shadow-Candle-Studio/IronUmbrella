@@ -6,7 +6,9 @@
 #include "NiagaraComponent.h"
 #include "BP_MovementComponentBase.h"
 #include "Pixel2DComponent.h"
-#include "IronUmbrella/Controllable2DPawnBase.h"
+#include "IronUmbrella/AllStructuresAndEnums.h"
+#include "IronUmbrella/IronBasicObject.h"
+
 #include "Kismet/GameplayStatics.h"
 
 
@@ -28,7 +30,7 @@ void UBP_AttackComponentBase::BeginPlay()
 {
 	Super::BeginPlay();
 	OwningChaRef=GetOwner();
-	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningChaRef);
+	AIronBasicObject * Cha=Cast<AIronBasicObject>(OwningChaRef);
 	if(Cha!=nullptr)
 	{
 		OwnerPixelCompoRef=Cast
@@ -122,10 +124,10 @@ void UBP_AttackComponentBase::ProcessAttackHitResults_Implementation(const TArra
 			FTransform m(FRotator::ZeroRotator,p.ImpactPoint,FVector(0.01));
 			enableAttackVFX(m);
 			//UE_LOG(LogTemp,Warning,L"We have attacked %s",*p.Actor->GetName())
-			if(Cast<AControllable2DPawnBase>(OwningChaRef)!=nullptr)
+			if(Cast<AIronBasicObject>(OwningChaRef)!=nullptr)
 				UGameplayStatics::ApplyDamage(p.Actor.Get(),
 					100,
-					Cast<AControllable2DPawnBase>(OwningChaRef)->GetController(),
+					Cast<AIronBasicObject>(OwningChaRef)->GetController(),
 					OwningChaRef,
 					UDamageType::StaticClass());
 			
