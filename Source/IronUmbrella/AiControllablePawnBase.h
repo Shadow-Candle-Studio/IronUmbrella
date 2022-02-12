@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "IronMobileObject.h"
-#include "UObject/Object.h"
 #include "AiControllablePawnBase.generated.h"
 
 /**

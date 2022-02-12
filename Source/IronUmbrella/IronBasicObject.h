@@ -11,7 +11,6 @@ Basic features supported:
 
 #include "CoreMinimal.h"
 #include "Pixel2DCharacter.h"
-#include "UObject/Object.h"
 #include "IronBasicObject.generated.h"
 
 /**

@@ -10,11 +10,18 @@ Basic features supported:
 
 #include "CoreMinimal.h"
 #include "IronBasicObject.h"
-#include "UObject/Object.h"
 #include "IronMobileObject.generated.h"
 
+UENUM()
+enum OriginSpriteDirectionEnum
+{
+	Left,
+	Right
+};
+
+
 /**
- * 
+ * AIronMobileObject
  */
 UCLASS(BlueprintType,Blueprintable,ShowCategories=("Pixel2D character"))
 class IRONUMBRELLA_API AIronMobileObject : public AIronBasicObject
@@ -25,7 +32,12 @@ class IRONUMBRELLA_API AIronMobileObject : public AIronBasicObject
 	void ChangeFaceDirection(bool bFaceRight);
 	//true is right, false is left
 	bool LastDirection;
+	
+	
 public:
+	UPROPERTY(BlueprintReadWrite,Category="MobileObjectParams",EditAnywhere)
+	TEnumAsByte<OriginSpriteDirectionEnum> OriginDirection; 
+	
 	UFUNCTION(BlueprintCallable)
 	void AutoAdaptSpriteToVelocityDirection(float VelocityXValue);
 };

@@ -11,7 +11,11 @@ void AIronMobileObject::ChangeFaceDirection(bool bDesireFaceRight)
 	bool currentDir=GetSprite()->GetRelativeRotation().Yaw==0?true:false;
 	if(currentDir!=bDesireFaceRight)
 	{
-		GetSprite()->SetRelativeRotation(FRotator(0,bDesireFaceRight?0.0f:180.0f,0));
+		GetSprite()->SetRelativeRotation(
+			FRotator(0,bDesireFaceRight?
+			(OriginDirection==Right?0:180):
+			((OriginDirection==Right?180:0)),
+			0));
 	}
 }
 

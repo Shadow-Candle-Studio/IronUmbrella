@@ -4,7 +4,6 @@
 #include "BP_MovementComponentBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "IronUmbrella/Controllable2DPawnBase.h"
-#include "UExplorer/StateManager.h"
 
 
 // Sets default values for this component's properties
@@ -41,9 +40,9 @@ void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashD
 	if(Cha!=nullptr&&ChaMovementCompoRef!=nullptr)
 	{
 		
-		if(!Cha->isDashing)
+		if(!Cha->isDashing&&CanYouDash)
 		{
-			//UE_LOG(LogTemp,Warning,L"Check dashed ")
+			CanYouDash=false;
 			ChaMovementCompoRef->SetMovementMode(EMovementMode::MOVE_Falling);
 			ChaMovementCompoRef->Velocity=FVector
 			(Cha->GetYourCharacterSprite()->
@@ -54,7 +53,13 @@ void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashD
 				&UBP_MovementComponentBase::CheckDashOver,
 				DashDuration,false,-1);
 			Cha->isDashing=true;
-			Delegate_DashStateToUpload.Broadcast();
+			Delegate_DashStateChanged.Broadcast();
+			GetWorld()->GetTimerManager().SetTimer
+			(DashCDTimerHandle,
+				this,&UBP_MovementComponentBase::AllowDashAgain,
+				DashingCDTimeInterVal,
+				false,
+				-1);
 		}
 	}
 }
@@ -77,7 +82,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 				this,&UBP_MovementComponentBase::CheckJumpOver,
 				0.1,true,-1);
 			Cha->isFalling=true;
-			Delegate_JumpStateToUpload.Broadcast();
+			Delegate_JumpStateChanged.Broadcast();
 			JumpCount++;
 		}
 		
@@ -104,7 +109,7 @@ void UBP_MovementComponentBase::CheckDashOver()
 	if(Cha!=nullptr)
 	{
 		Cha->isDashing=false;
-		Delegate_DashStateToUpload.Broadcast();
+		Delegate_DashStateChanged.Broadcast();
 		GetWorld()->GetTimerManager().ClearTimer(DashTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	}
@@ -120,7 +125,7 @@ void UBP_MovementComponentBase::CheckJumpOver()
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		JumpCount=0;
-		Delegate_JumpStateToUpload.Broadcast();
+		Delegate_JumpStateChanged.Broadcast();
 	}
 }
 

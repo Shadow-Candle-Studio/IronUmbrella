@@ -23,9 +23,9 @@ class IRONUMBRELLA_API UBP_MovementComponentBase : public UActorComponent
 	GENERATED_BODY()
 
 public:
-
 	
-	
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	float DashingCDTimeInterVal=1.0f;
 	// Sets default values for this component's properties
 	UBP_MovementComponentBase();
 
@@ -50,10 +50,10 @@ public:
 
 
 	UPROPERTY(BlueprintAssignable)
-	FOnDashStateUpdate Delegate_DashStateToUpload;
+	FOnDashStateUpdate Delegate_DashStateChanged;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnJumpStateUpdate Delegate_JumpStateToUpload;
+	FOnJumpStateUpdate Delegate_JumpStateChanged;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -64,9 +64,12 @@ protected:
 	//owner of this component
 	AActor* OwningActor;
 
-	//TimerHandle for Dash controlling
+	//TimerHandle for IsDash controlling
 	FTimerHandle DashTimerHandle;
 
+	//TimerHandle for Dash controlling
+	FTimerHandle DashCDTimerHandle;
+	
 	//TimerHandle for Jump controlling
 	FTimerHandle JumpTimerHandle;
 
@@ -74,6 +77,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	uint8 JumpCount=0;
 
+	//true: you can dash false: you have dashed,until the CD time is expired, you can not dash now
+	bool CanYouDash=true;
 	//Check dash over is a designed-for-timer function to
 	//stop dashing when specific requirements are met
 	void CheckDashOver();
@@ -81,6 +86,12 @@ protected:
 	//Check jump over repeatedly detects the velocity on Z axis and
 	//stop jumping when abs(Z) is nearly zero
 	void CheckJumpOver();
+
+	//give back your right to dash Again
+	void AllowDashAgain()
+	{
+		CanYouDash=true;
+	}
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
