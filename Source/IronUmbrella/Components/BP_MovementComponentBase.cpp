@@ -81,7 +81,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 			SetTimer(JumpTimerHandle,
 				this,&UBP_MovementComponentBase::CheckJumpOver,
 				0.1,true,-1);
-			isPawnFalling=true;
+			//Jump start isfalling is true
 			Delegate_JumpStateChanged.Broadcast();
 			JumpCount++;
 		}
@@ -119,12 +119,13 @@ void UBP_MovementComponentBase::CheckJumpOver()
 {
 	
 	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
-	if(Cha!=nullptr&&abs(Cha->GetVelocity().Z)<=0.0f&&isPawnFalling)
+	//abs(Cha->GetVelocity().Z)<=0.0f
+	if(Cha!=nullptr&&Cha->GetCharacterMovement()!=nullptr&&!Cha->GetCharacterMovement()->IsFalling())
 	{
-		isPawnFalling=false;
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		JumpCount=0;
+		
 		Delegate_JumpStateChanged.Broadcast();
 	}
 }
