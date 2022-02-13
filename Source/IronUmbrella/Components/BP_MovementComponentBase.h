@@ -96,4 +96,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+	//Detect whether this pawn is in air
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isPawnFalling;
+	//Detect whether this pawn is dashing
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
+	bool isPawnDashing=false;
 };

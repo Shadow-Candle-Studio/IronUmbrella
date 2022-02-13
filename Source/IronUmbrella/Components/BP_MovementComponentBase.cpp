@@ -3,7 +3,7 @@
 
 #include "BP_MovementComponentBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "IronUmbrella/Controllable2DPawnBase.h"
+#include "IronUmbrella/IronMobileObject.h"
 
 
 // Sets default values for this component's properties
@@ -36,11 +36,11 @@ void UBP_MovementComponentBase::Move_Implementation(APawn* Cha, float MoveValue)
 
 void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashDuration)
 {
-	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
+	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
 	if(Cha!=nullptr&&ChaMovementCompoRef!=nullptr)
 	{
 		
-		if(!Cha->isDashing&&CanYouDash)
+		if(!isPawnDashing&&CanYouDash)
 		{
 			CanYouDash=false;
 			ChaMovementCompoRef->SetMovementMode(EMovementMode::MOVE_Falling);
@@ -52,7 +52,7 @@ void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashD
 				this,
 				&UBP_MovementComponentBase::CheckDashOver,
 				DashDuration,false,-1);
-			Cha->isDashing=true;
+			isPawnDashing=true;
 			Delegate_DashStateChanged.Broadcast();
 			GetWorld()->GetTimerManager().SetTimer
 			(DashCDTimerHandle,
@@ -67,10 +67,10 @@ void UBP_MovementComponentBase::Dash_Implementation(float DashSpeed, float DashD
 void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 {
 	
-	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
+	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
 	if(Cha!=nullptr)
 	{
-		if(JumpCount<JumpMaxCountLimit&&!Cha->isDashing)
+		if(JumpCount<JumpMaxCountLimit&&!isPawnDashing)
 		{
 			
 			Cha->GetCharacterMovement()->
@@ -81,7 +81,7 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 			SetTimer(JumpTimerHandle,
 				this,&UBP_MovementComponentBase::CheckJumpOver,
 				0.1,true,-1);
-			Cha->isFalling=true;
+			isPawnFalling=true;
 			Delegate_JumpStateChanged.Broadcast();
 			JumpCount++;
 		}
@@ -105,10 +105,10 @@ void UBP_MovementComponentBase::BeginPlay()
 
 void UBP_MovementComponentBase::CheckDashOver()
 {
-	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
+	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
 	if(Cha!=nullptr)
 	{
-		Cha->isDashing=false;
+		isPawnDashing=false;
 		Delegate_DashStateChanged.Broadcast();
 		GetWorld()->GetTimerManager().ClearTimer(DashTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
@@ -117,11 +117,11 @@ void UBP_MovementComponentBase::CheckDashOver()
 
 void UBP_MovementComponentBase::CheckJumpOver()
 {
-	//UE_LOG(LogTemp,Warning,L"JumpOverChecking")
-	AControllable2DPawnBase * Cha=Cast<AControllable2DPawnBase>(OwningActor);
-	if(Cha!=nullptr&&abs(Cha->GetVelocity().Z)<=0.0f&&Cha->isFalling)
+	
+	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
+	if(Cha!=nullptr&&abs(Cha->GetVelocity().Z)<=0.0f&&isPawnFalling)
 	{
-		Cha->isFalling=false;
+		isPawnFalling=false;
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);
 		Cha->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		JumpCount=0;

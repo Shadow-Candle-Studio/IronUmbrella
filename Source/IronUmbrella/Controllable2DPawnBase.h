@@ -154,16 +154,6 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void Appear(bool bShow);
 	void Appear_Implementation(bool bShow);
-
-	
-
-	
-	//Detect whether this pawn is in air
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isFalling;
-	//Detect whether this pawn is dashing
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="BaseInfo")
-	bool isDashing=false;
 	
 	
 };
