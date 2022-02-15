@@ -23,8 +23,8 @@ USimpleAIComponentBase::USimpleAIComponentBase()
 void USimpleAIComponentBase::BeginPlay()
 {
 	Super::BeginPlay();
-	OnComponentBeginOverlap.AddDynamic(this,&USimpleAIComponentBase::WhenComponentBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this,&USimpleAIComponentBase::WhenComponentEndOverlap);
+	OnComponentBeginOverlap.AddDynamic(this,&USimpleAIComponentBase::WhenPlayerEnterDetectingArea);
+	OnComponentEndOverlap.AddDynamic(this,&USimpleAIComponentBase::USimpleAIComponentBase::WhenPlayerOutOfDetectingArea);
 	WhenPlayerActorPointerValueChanged.AddDynamic(this,&USimpleAIComponentBase::WhenPlayerPointerValueChanged);
 
 	
@@ -56,9 +56,46 @@ void USimpleAIComponentBase::SetPlayerPointer(AActor* in_Pplayer)
 	}
 }
 
+void USimpleAIComponentBase::ActivateAiLoop()
+{
+	if(GetWorld()->GetTimerManager().TimerExists(AiUpdateTimer))
+	{
+		GetWorld()->GetTimerManager().UnPauseTimer(AiUpdateTimer);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().SetTimer
+		(AiUpdateTimer,this,
+			&USimpleAIComponentBase::AiUpdateEvent,
+			AiUpdateTimerSpeed,
+			true,
+			-1);
+	}
+}
+
+void USimpleAIComponentBase::DeactivateAiLoop()
+{
+	if(GetWorld()->GetTimerManager().TimerExists(AiUpdateTimer))
+	{
+		GetWorld()->GetTimerManager().PauseTimer(AiUpdateTimer);
+	}
+	else
+	{
+		
+	}
+}
+
+void USimpleAIComponentBase::DestroyAiLoop()
+{
+	if(GetWorld()->GetTimerManager().TimerExists(AiUpdateTimer))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(AiUpdateTimer);
+	}
+}
+
 void USimpleAIComponentBase::AiUpdateEvent_Implementation()
 {
-	;
+	//YellSomething("Oh i am running the ai update!");
 }
 
 void USimpleAIComponentBase::WhenPlayerPointerValueChanged_Implementation()
@@ -67,31 +104,16 @@ void USimpleAIComponentBase::WhenPlayerPointerValueChanged_Implementation()
 	if(this->PlayerPointer!=nullptr)
 	{
 		++PlayerCommingToMyFieldTimes;
-		//timer exists so you only need to unpause it and use it
-		if(GetWorld()->GetTimerManager().TimerExists(AiUpdateTimer))
-		{
-			GetWorld()->GetTimerManager().UnPauseTimer(AiUpdateTimer);
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer
-			(AiUpdateTimer,this,
-				&USimpleAIComponentBase::AiUpdateEvent,
-				AiUpdateTimerSpeed,
-				true,
-				-1);
-		}
+		ActivateAiLoop();
+		
 	}
 	else //player coming out of field or dead
 	{
-		if(GetWorld()->GetTimerManager().TimerExists(AiUpdateTimer))
-		{
-			GetWorld()->GetTimerManager().PauseTimer(AiUpdateTimer);
-		}
+		DeactivateAiLoop();
 	}
 }
 
-void USimpleAIComponentBase::WhenComponentBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent,
+void USimpleAIComponentBase::WhenPlayerEnterDetectingArea_Implementation(UPrimitiveComponent* OverlappedComponent,
                                                                       AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                                                       const FHitResult& SweepResult)
 {
@@ -102,12 +124,13 @@ void USimpleAIComponentBase::WhenComponentBeginOverlap_Implementation(UPrimitive
 }
 
 
-void USimpleAIComponentBase::WhenComponentEndOverlap_Implementation(UPrimitiveComponent* OverlappedComponent,
+void USimpleAIComponentBase::WhenPlayerOutOfDetectingArea_Implementation(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if(OtherActor!=nullptr&&OtherActor->ActorHasTag(PlayerTag))
 	{
 		SetPlayerPointer(nullptr);
+		Player_LastAppearancePosition=OtherActor->GetActorLocation();
 	}
 }
 

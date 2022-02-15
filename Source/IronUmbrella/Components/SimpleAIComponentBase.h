@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
+#include "IronUmbrella/IronMobileObject.h"
 #include "SimpleAIComponentBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerActorPointerValueChanged);
@@ -19,6 +19,7 @@ public:
 	USimpleAIComponentBase();
 private:
 	AActor* PlayerPointer;
+	FVector Player_LastAppearancePosition;
 	FTimerHandle AiUpdateTimer;
 	int PlayerCommingToMyFieldTimes=0;
 protected:
@@ -29,24 +30,55 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
+	//Moving acceleration multiplier
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float MovingInputAdditionMultiplier=200;
 	//Speed of the ai updating timer when player comes into the field of a monster
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float AiUpdateTimerSpeed=0.1f;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	float AcceptableAttackingRadius=10.0f;
+	//set the tracking target pointer
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerPointer(AActor* in_Pplayer);
+
+	//Get the player pointer function
 	UFUNCTION(BlueprintCallable)
 	AActor* GetPlayerPointer() const
 	{
 		return PlayerPointer;
 	}
+	UFUNCTION(BlueprintCallable)
+	AIronMobileObject* GetOwningCharacter() const
+	{
+		return Cast<AIronMobileObject>(OwningCharacter);
+	}
+	UFUNCTION(BlueprintCallable)
+	void ActivateAiLoop();
+	UFUNCTION(BlueprintCallable)
+	void DeactivateAiLoop();
 	UFUNCTION(BlueprintNativeEvent)
-	void WhenComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	void WhenPlayerEnterDetectingArea(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult & SweepResult);
 	UFUNCTION(BlueprintNativeEvent)
-	void WhenComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void WhenPlayerOutOfDetectingArea(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void WhenPlayerPointerValueChanged();
 
 	UFUNCTION(BlueprintNativeEvent)
 	void AiUpdateEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyAiLoop();
 };
