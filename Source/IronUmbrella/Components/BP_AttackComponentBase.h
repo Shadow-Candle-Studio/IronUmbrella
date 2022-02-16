@@ -30,6 +30,7 @@ public:
 	UBP_AttackComponentBase();
 
 protected:
+	bool AllowProcessAttackCheck=true;
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	//Pixel component ref in the owner, convenient for us to access

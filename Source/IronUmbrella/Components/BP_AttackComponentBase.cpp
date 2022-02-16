@@ -61,8 +61,10 @@ void UBP_AttackComponentBase::BeginPlay()
 void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 {
 	//process all attack collision
-	if(CheckIfAnyAttackExists())
+	bool hasAttackFrame=CheckIfAnyAttackExists();
+	if(hasAttackFrame&&AllowProcessAttackCheck)
 	{
+		AllowProcessAttackCheck=false;
 		TArray<FName> Attacksockets;
 		int i=0;
 		while(i<50)
@@ -78,6 +80,7 @@ void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 				break;
 			}
 		}
+		TArray<FHitResult> OutResults;
 		for(int index=0;index<Attacksockets.Num()-1;index++)
 		{
 			FString Socket_i(AttackSocketNamePrefix.ToString());
@@ -85,36 +88,48 @@ void UBP_AttackComponentBase::TimerFunc_CheckPossibleAttacks()
 			
 			FString Socket_i_plus_1(AttackSocketNamePrefix.ToString());
 			Socket_i_plus_1.AppendInt(index+1);
-			TArray<FHitResult> OutResults;
+			TArray<FHitResult> TmpOutResults;
 			FCollisionShape SweepShape=FCollisionShape::MakeSphere(SphereTraceRadius);
 			FCollisionQueryParams CQueryParams=FCollisionQueryParams::DefaultQueryParam;
 			FCollisionResponseParams CResponseParams=FCollisionResponseParams::DefaultResponseParam;
 			//Fcollision sweeping
 			CQueryParams.bTraceComplex=true;
 			CQueryParams.AddIgnoredActor(OwningChaRef);
-			GetWorld()->SweepMultiByChannel(OutResults,
+			GetWorld()->SweepMultiByChannel(TmpOutResults,
 				OwnerPixelCompoRef->GetSocketLocation(FName(*Socket_i)),
 				OwnerPixelCompoRef->GetSocketLocation(FName(*Socket_i_plus_1)),
 				FQuat::Identity,ECollisionChannel::ECC_Camera,
 				SweepShape,
 				CQueryParams,
 				CResponseParams);
-			if(OutResults.Num()>0)
+			if(TmpOutResults.Num()>0)
 			{
-				ProcessAttackHitResults(OutResults);
+				OutResults.Append(TmpOutResults);
 			}
 			
 		}
 		
+		if(OutResults.Num()>0)
+		{
+			ProcessAttackHitResults(OutResults);
+		}
+		
+		
+	}
+	if(!hasAttackFrame)
+	{
+		AllowProcessAttackCheck=true;
 	}
 }
 
 void UBP_AttackComponentBase::ProcessAttackHitResults_Implementation(const TArray<FHitResult>& ResultsToProcess)
 {
+	
 	for(auto &p:ResultsToProcess)
 	{
 		if(p.Actor.IsValid()&&OwningChaRef!=nullptr)
 		{
+			
 			// auto m=Cast<UBP_MovementComponentBase>(Cast<AControllable2DPawnBase>(p.Actor)->
 			// 	GetComponentByClass(UBP_MovementComponentBase::StaticClass()));
 			// if(m!=nullptr)
