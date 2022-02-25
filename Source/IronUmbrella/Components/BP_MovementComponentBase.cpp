@@ -89,16 +89,24 @@ void UBP_MovementComponentBase::Jump_Implementation(float JumpVelocity)
 	}
 }
 
+void UBP_MovementComponentBase::PerformBeingAttackedBehavior_Implementation(FVector InComingImpactDirection,float FinalValueMultiplier)
+{
+	AcquireOwnerAndMovementCompo();
+	AIronMobileObject * Cha=Cast<AIronMobileObject>(OwningActor);
+	if(Cha!=nullptr&&ChaMovementCompoRef!=nullptr)
+	{
+		ChaMovementCompoRef->SetMovementMode(EMovementMode::MOVE_Falling);
+		ChaMovementCompoRef->Velocity=InComingImpactDirection*FinalValueMultiplier;
+		
+	}
+}
+
 // Called when the game starts
 void UBP_MovementComponentBase::BeginPlay()
 {
 	Super::BeginPlay();
 	// ...
-	OwningActor=GetOwner();
-	ChaMovementCompoRef=Cast<UCharacterMovementComponent>(
-		OwningActor->GetComponentByClass
-		(UCharacterMovementComponent::StaticClass()));
-	
+	AcquireOwnerAndMovementCompo();
 	
 }
 
@@ -128,6 +136,17 @@ void UBP_MovementComponentBase::CheckJumpOver()
 		
 		Delegate_JumpStateChanged.Broadcast();
 	}
+}
+
+void UBP_MovementComponentBase::AcquireOwnerAndMovementCompo()
+{
+	OwningActor=GetOwner();
+	if(OwningActor!=nullptr&&Cast<AIronMobileObject>(OwningActor)!=nullptr)
+	{
+		ChaMovementCompoRef=Cast<AIronMobileObject>(OwningActor)->GetCharacterMovement();
+	}
+	
+	
 }
 
 // Called every frame
