@@ -54,6 +54,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnJumpStateUpdate Delegate_JumpStateChanged;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void PerformBeingAttackedBehavior(FVector InComingImpactDirection,float FinalValueMultiplier);
+	void PerformBeingAttackedBehavior_Implementation(FVector InComingImpactDirection,float FinalValueMultiplier);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -92,6 +96,8 @@ protected:
 	{
 		CanYouDash=true;
 	}
+
+	void AcquireOwnerAndMovementCompo();
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
